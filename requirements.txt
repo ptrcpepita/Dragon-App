@@ -1,0 +1,8 @@
+streamlit
+plotly
+pandas
+numpy
+re
+io
+datetime
+base64
