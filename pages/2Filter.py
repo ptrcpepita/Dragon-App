@@ -11,7 +11,7 @@ st.markdown(
         """
         <style>
             [data-testid = "stSidebarNav"]{
-            background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon_logo_png.png");
             background-repeat: no-repeat;
             background-size: 210px;
             padding-top: 100px;
@@ -35,12 +35,12 @@ if 'savedata_clicked' not in st.session_state:
 
 st.markdown("## 🎯 Data Filtering")
 
-st.image("https://raw.githubusercontent.com/ptrcp/dragon_app/13a79db87cb94c6eef728c60f2464c3a7cd72c52/userflow_filter.png", width=700)
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_filter.png", width=700)
 
 # 1. UPLOAD DATA
 st.markdown("---")
 st.subheader("📂 1. Upload an Excel File")
-uploaded_file = st.file_uploader('Upload here', type=["xlsx", "xls", "csv"])
+uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
 
 current_file_name = uploaded_file.name if uploaded_file else None
 if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
@@ -55,10 +55,8 @@ elif uploaded_file and "uploaded_file_name" not in st.session_state:
 if uploaded_file:
     try:
         if "original_df" not in st.session_state:
-            #if uploaded_file in [".xls", ".xlsx"]:
-            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
-            #else:
-                #df = pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
             # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
