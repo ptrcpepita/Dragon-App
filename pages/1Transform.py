@@ -47,6 +47,7 @@ st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d
 st.markdown("---")
 st.subheader("📂 1. Upload an Excel File")
 uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
+st.write("Please upload file below 150 MB")
 
 current_file_name = uploaded_file.name if uploaded_file else None
 if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
@@ -912,10 +913,10 @@ if uploaded_file:
                         st.markdown("---")
                         st.subheader('📊 5. Preview Data')
                         st.write("**Data shape:**", df.shape)
-                        st.write("**First 5 Rows:**")
-                        st.dataframe(df.head())
-                        st.write("**Last 5 Rows:**")
-                        st.dataframe(df.tail())
+                        # st.write("**First 5 Rows:**")
+                        # st.dataframe(df.head())
+                        # st.write("**Last 5 Rows:**")
+                        # st.dataframe(df.tail())
                         st.write("**All Data Row:**")
                         st.dataframe(df)
             
