@@ -2,5 +2,4 @@
 headless = true
 port = 8501
 enableCORS = false
-maxUploadSize = 400
-maxMessageSize = 400
+maxUploadSize = 200
