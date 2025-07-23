@@ -41,7 +41,7 @@ if 'savedata_clicked' not in st.session_state:
 
 st.markdown("## 🔄 Data Transformation")
 
-st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_transform.png", width=650)
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d24544b50e00fb68cea9b8a98f2/asset/userflow_transform.png", width=650)
 
 # 1. UPLOAD DATA
 st.markdown("---")
