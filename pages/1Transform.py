@@ -11,7 +11,7 @@ st.markdown(
         """
         <style>
             [data-testid = "stSidebarNav"]{
-            background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon_logo_png.png");
             background-repeat: no-repeat;
             background-size: 210px;
             padding-top: 100px;
@@ -41,12 +41,12 @@ if 'savedata_clicked' not in st.session_state:
 
 st.markdown("## 🔄 Data Transformation")
 
-st.image("https://raw.githubusercontent.com/ptrcp/dragon_app/0cc868f337e105fe2ba4b1508bd51cdc7e9d1c63/userflow_transform.png", width=650)
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_transform.png", width=650)
 
 # 1. UPLOAD DATA
 st.markdown("---")
 st.subheader("📂 1. Upload an Excel File")
-uploaded_file = st.file_uploader('Upload here', type=["xlsx", "xls", "csv"])
+uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
 
 current_file_name = uploaded_file.name if uploaded_file else None
 if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
@@ -61,9 +61,8 @@ elif uploaded_file and "uploaded_file_name" not in st.session_state:
 if uploaded_file:
     try:
         if "original_df" not in st.session_state:
-            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
-            #else:
-                #df = pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
             # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
@@ -90,7 +89,7 @@ if uploaded_file:
 
             st.write("**Column Names and Data Types:**")
             st.dataframe(info_df)
-            
+                        
             st.success("Done exploring. Clean the data by clicking button below")
 
             # 3. CLEAN DATA
@@ -130,311 +129,317 @@ if uploaded_file:
 
                     transform_opt = ['KTP/ID Validation', 'Phone Number Validation', 'Tahun Periode Polis',
                                     'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kecamatan', 'Kota/Kab.', 'Provinsi',
-                                    'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured']
+                                    'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Last Segmen']
             
                     selected_column = st.selectbox("Transformation Options", options=[""] + transform_opt)
                     if selected_column:
-                                                    
-                            # ON PROGRESS
-                            if selected_column == "KTP/ID Validation":
-                                st.markdown("""
-                                `KTP/ID Validation` needs `KTP/ID` and `BirthDate/DoB` column and will do this validation:
-                                - Length validation (16 digits)
-                                - Read gender from the 7th and 8th digit (if > 40 = female)
-                                - Read birthdate from the 7th until 12th digit
-                                - Match the extracted birthdate and birthdate from the data
-                                """)
-                                ktp = st.selectbox("Choose field that represents `KTP`", options=[""] + list(df.columns))
-                                dob_data = st.selectbox("Choose field that represents `DoB`", options=[""] + list(df.columns))
-                                gender_data = st.selectbox("Choose field that represents `gender`", options=[""] + list(df.columns))
+                                                                                                                
+                        # LAST SEGMENT ON PROGRESS (indent=6)
+                        if selected_column == "Last Segmen":
+                            st.markdown("""
+                            `Last Segmen` needs `Customer Name`, `Birth date`, `Period To`, and `Segmen` columns and will do this validation:
+                            """)
+                            
+                        if selected_column == "KTP/ID Validation":
+                            st.markdown("""
+                            `KTP/ID Validation` needs `KTP/ID` and `BirthDate/DoB` column and will do this validation:
+                            - Length validation (16 digits)
+                            - Read gender from the 7th and 8th digit (if > 40 = female)
+                            - Read birthdate from the 7th until 12th digit
+                            - Match the extracted birthdate and birthdate from the data
+                            """)
+                            ktp = st.selectbox("Choose field that represents `KTP`", options=[""] + list(df.columns))
+                            dob_data = st.selectbox("Choose field that represents `DoB`", options=[""] + list(df.columns))
+                            gender_data = st.selectbox("Choose field that represents `gender`", options=[""] + list(df.columns))
                                 
-                                if ktp:
-                                    if st.button("Validate KTP"):
-                                        df_ktp =df.copy()
+                            if ktp:
+                                if st.button("Validate KTP"):
+                                    df_ktp =df.copy()
                                         
-                                        def ktp_val(ktp):
-                                            if pd.isna(ktp) or ktp == "NAN" or ktp == "NA":
-                                                return "Invalid: empty", "NA", "NA"
-                                            ktp = str(ktp).strip()
-                                            ktp = re.sub(r"\s+", " ", ktp)
-                                            ktp = re.sub(r"\..*$", "", ktp)
+                                    def ktp_val(ktp):
+                                        if pd.isna(ktp) or ktp == "NAN" or ktp == "NA":
+                                            return "Invalid: empty", "NA", "NA"
+                                        ktp = str(ktp).strip()
+                                        ktp = re.sub(r"\s+", " ", ktp)
+                                        ktp = re.sub(r"\..*$", "", ktp)
                                             
-                                            if not len(ktp) == 16:
-                                                return "Invalid: Length", "NA", "NA"
+                                        if not len(ktp) == 16:
+                                            return "Invalid: Length", "NA", "NA"
 
-                                            elif ktp[0] == '0':
-                                                return "Invalid: Wrong format", "NA", "NA"
-                                            elif ktp[:2] == '97' or ktp[:2] == "98" or ktp[:2] == "99" or ktp[:2] == "10":
-                                                return "Invalid: Wrong format", "NA", "NA"
+                                        elif ktp[0] == '0':
+                                            return "Invalid: Wrong format", "NA", "NA"
+                                        elif ktp[:2] == '97' or ktp[:2] == "98" or ktp[:2] == "99" or ktp[:2] == "10":
+                                            return "Invalid: Wrong format", "NA", "NA"
                                                 
-                                            else:
-                                                day = int(ktp[6:8])
+                                        else:
+                                            day = int(ktp[6:8])
                                             
-                                                if day >= 40:
-                                                    day -= 40
-                                                    month = int(ktp[8:10])
-                                                    year_suffix = int(ktp[10:12])
-                                                    year = 1900 + year_suffix if year_suffix >= 40 else 2000 + year_suffix
-                                                    dob = f"{day:02d}/{month:02d}/{year}"
-                                                    dob = pd.to_datetime(dob, errors="coerce", dayfirst=True)
-                                                    return ktp, "F", dob
-                                    
+                                            if day >= 40:
+                                                day -= 40
                                                 month = int(ktp[8:10])
                                                 year_suffix = int(ktp[10:12])
                                                 year = 1900 + year_suffix if year_suffix >= 40 else 2000 + year_suffix
                                                 dob = f"{day:02d}/{month:02d}/{year}"
                                                 dob = pd.to_datetime(dob, errors="coerce", dayfirst=True)
-                                            
-                                                return ktp, "M", dob
+                                                return ktp, "F", dob
                                     
-                                        df_ktp[f"{ktp}_val"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[0])
-                                        df_ktp["Gender KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[1])
-                                        df_ktp["DoB KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[2])
+                                            month = int(ktp[8:10])
+                                            year_suffix = int(ktp[10:12])
+                                            year = 1900 + year_suffix if year_suffix >= 40 else 2000 + year_suffix
+                                            dob = f"{day:02d}/{month:02d}/{year}"
+                                            dob = pd.to_datetime(dob, errors="coerce", dayfirst=True)
+                                            
+                                            return ktp, "M", dob
+                                    
+                                    df_ktp[f"{ktp}_val"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[0])
+                                    df_ktp["Gender KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[1])
+                                    df_ktp["DoB KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[2])
                                         
-                                        df_ktp["DoB KTP"] = pd.to_datetime(df_ktp["DoB KTP"], errors="coerce")
-                                        df_ktp[dob_data] = pd.to_datetime(df_ktp[dob_data], errors="coerce")
+                                    df_ktp["DoB KTP"] = pd.to_datetime(df_ktp["DoB KTP"], errors="coerce")
+                                    df_ktp[dob_data] = pd.to_datetime(df_ktp[dob_data], errors="coerce")
                                         
-                                        df_ktp["DoB Match"] = df_ktp["DoB KTP"].dt.date == df_ktp[dob_data].dt.date
-                                        df_ktp["DoB Match"] = df_ktp["DoB Match"].map({True: "Yes", False: "No"})
-                                        df_ktp["Gender Match"] = df_ktp["Gender KTP"] == df_ktp[gender_data]
-                                        df_ktp["Gender Match"] = df_ktp["Gender Match"].map({True: "Yes", False: "No"})
+                                    df_ktp["DoB Match"] = df_ktp["DoB KTP"].dt.date == df_ktp[dob_data].dt.date
+                                    df_ktp["DoB Match"] = df_ktp["DoB Match"].map({True: "Yes", False: "No"})
+                                    df_ktp["Gender Match"] = df_ktp["Gender KTP"] == df_ktp[gender_data]
+                                    df_ktp["Gender Match"] = df_ktp["Gender Match"].map({True: "Yes", False: "No"})
                                 
-                                        st.session_state.df = df_ktp
+                                    st.session_state.df = df_ktp
 
-                                        st.success("KTP validation complete")
+                                    st.success("KTP validation complete")
                             
-                                        st.dataframe(df_ktp[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]])
-                                        st.session_state.change_history.append(
-                                            "• Field `KTP Validation` created"
-                                        )       
+                                    st.dataframe(df_ktp[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]])
+                                    st.session_state.change_history.append(
+                                        "• Field `KTP Validation` created"
+                                    )       
                                 
-                            # DONE
-                            if selected_column == "Phone Number Validation":
-                                st.markdown("""
-                                `Phone Number Validation` needs `Phone Number` column and will do this validation:
-                                - Change all prefix into '08xxx'
-                                - Fill '0' to more than 5 digits serial number (e.g. 000000xxx)
-                                - Length validation between 10-13 digits
-                                """)
-                                phone_col = st.selectbox("Choose field that represents `phone number`", options=[""] + list(df.columns))
-                                if phone_col:
-                                    if st.button("Validate phone number"):
-                                        df_validated = df.copy()
-                                        def validate_phone(phone):
-                                            if pd.isna(phone):
-                                                return "NA","Invalid: empty"
-                                            phone = str(phone)
-                                            phone = re.sub(r'\D','',phone)
-                                            if phone == '0':
-                                                return "NA", "Invalid: empty"
-                                            if phone.startswith("62"):
-                                                phone = "0" + phone[2:]
-                                            elif phone.startswith("+62"):
-                                                phone = "0" + phone[3:]
-                                            elif phone.startswith("8"):
-                                                phone = "0" + phone
+                        # indent 6
+                        if selected_column == "Phone Number Validation":
+                            st.markdown("""
+                            `Phone Number Validation` needs `Phone Number` column and will do this validation:
+                            - Change all prefix into '08xxx'
+                            - Fill '0' to more than 5 digits serial number (e.g. 000000xxx)
+                             - Length validation between 10-13 digits
+                            """)
+                            phone_col = st.selectbox("Choose field that represents `phone number`", options=[""] + list(df.columns))
+                            if phone_col:
+                                if st.button("Validate phone number"):
+                                    df_validated = df.copy()
+                                    def validate_phone(phone):
+                                        if pd.isna(phone):
+                                            return "NA","Invalid: empty"
+                                        phone = str(phone)
+                                        phone = re.sub(r'\D','',phone)
+                                        if phone == '0':
+                                            return "NA", "Invalid: empty"
+                                        if phone.startswith("62"):
+                                            phone = "0" + phone[2:]
+                                        elif phone.startswith("+62"):
+                                            phone = "0" + phone[3:]
+                                        elif phone.startswith("8"):
+                                            phone = "0" + phone
                                             # HARUSNYA YG '0' SAMA EMPTY SAMA NA DISAMAIN DULU JADI = NA (?)
-                                            if re.search(r'(\d)\1{5,}', phone):
-                                                return "NA", 'Invalid: repeated digits'
-                                            if phone == "NAN":
-                                                return "NA", "Invalid: empty"
-                                            if not 10 <= len(phone) <= 13:
-                                                return "NA", "Invalid: Length"
+                                        if re.search(r'(\d)\1{5,}', phone):
+                                            return "NA", 'Invalid: repeated digits'
+                                        if phone == "NAN":
+                                            return "NA", "Invalid: empty"
+                                        if not 10 <= len(phone) <= 13:
+                                            return "NA", "Invalid: Length"
 
-                                            return phone, "Valid"
+                                        return phone, "Valid"
                                             
-                                        df_validated[f"{phone_col}_new"] = df_validated[phone_col].apply(lambda x: validate_phone(x)[0])
-                                        df_validated[f"{phone_col}_status"] = df_validated[phone_col].apply(lambda x:validate_phone(x)[1])
-                                        st.session_state.df = df_validated
-                                        st.success("Phone number validation complete")
-                                        st.dataframe(df_validated[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]])
-                                        st.session_state.change_history.append(
-                                            "• Field `Phone Number Validation` created"
-                                        )
+                                    df_validated[f"{phone_col}_new"] = df_validated[phone_col].apply(lambda x: validate_phone(x)[0])
+                                    df_validated[f"{phone_col}_status"] = df_validated[phone_col].apply(lambda x:validate_phone(x)[1])
+                                    st.session_state.df = df_validated
+                                    st.success("Phone number validation complete")
+                                    st.dataframe(df_validated[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]])
+                                    st.session_state.change_history.append(
+                                        "• Field `Phone Number Validation` created"
+                                    )
                         
-                            # DONE
-                            if selected_column == "Tahun Periode Polis":
-                                st.markdown("""
-                                `Tahun Periode Polis` needs `Period From` and `Period To` column and will do this calculation:
-                                - (Period To - Period From)/365 
-                                """)
-                                period_from = st.selectbox("Choose field that represents `period from`", options=[""] + list(df.columns))
-                                period_to = st.selectbox("Choose field that represents `period to`", options=[""] + list(df.columns))
-                                if period_from and period_to:
-                                    if st.button("Calculate tahun periode polis"):
-                                        try:
-                                            df_calc = df.copy()
-                                            df_calc[period_from] = pd.to_datetime(df_calc[period_from], errors='coerce')
-                                            df_calc[period_to] = pd.to_datetime(df_calc[period_to], errors='coerce')
-                                            df_calc["Tahun periode polis"] = (df_calc[period_to] - df_calc[period_from]).dt.days/365
-                                            df_calc["Tahun periode polis"] = df_calc["Tahun periode polis"].round(1)
-                                            st.dataframe(df_calc[[period_from, period_to, "Tahun periode polis"]])
+                        # DONE
+                        if selected_column == "Tahun Periode Polis":
+                            st.markdown("""
+                            `Tahun Periode Polis` needs `Period From` and `Period To` column and will do this calculation:
+                            - (Period To - Period From)/365 
+                            """)
+                            period_from = st.selectbox("Choose field that represents `period from`", options=[""] + list(df.columns))
+                            period_to = st.selectbox("Choose field that represents `period to`", options=[""] + list(df.columns))
+                            if period_from and period_to:
+                                if st.button("Calculate tahun periode polis"):
+                                    try:
+                                        df_calc = df.copy()
+                                        df_calc[period_from] = pd.to_datetime(df_calc[period_from], errors='coerce')
+                                        df_calc[period_to] = pd.to_datetime(df_calc[period_to], errors='coerce')
+                                        df_calc["Tahun periode polis"] = (df_calc[period_to] - df_calc[period_from]).dt.days/365
+                                        df_calc["Tahun periode polis"] = df_calc["Tahun periode polis"].round(1)
+                                        st.dataframe(df_calc[[period_from, period_to, "Tahun periode polis"]])
 
-                                            st.session_state.df = df_calc
-                                            st.success("`Tahun periode polis` successfully calculated and stored")
-                                            st.session_state.change_history.append(
-                                            "• Field `Tahun Periode Polis` created"
-                                            )
-                                        except Exception as e:
-                                            st.error(f"Error calculating tahun {e}")
-
-                            # DONE
-                            if selected_column == "Age (current)":
-                                st.markdown("""
-                                `Age (current)` needs `Birth Date` column and will do this calculation:
-                                - Date today-Birth date
-                                """)
-                                dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
-                                if dob:
-                                    if st.button("Calculate current age"):
-                                        try:
-                                            df_age = df.copy()
-                                            df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
-                                            today = pd.to_datetime("today")
-                                            df_age["Age (current)"] = (today - df_age[dob]).dt.days / 365.25
-                                            df_age["Age (current)"] = df_age["Age (current)"].round(0)
-                                    
-                                            df_age["Age (current)"].loc[df_age["Age (current)"] > 99] = 0
-                                            df_age["Age (current)"].loc[df_age["Age (current)"] < 17] = 0
-                                    
-                                            st.dataframe(df_age[[dob, "Age (current)"]])
-                                            st.session_state.df = df_age
-                                            st.success("Age (current) successfully calculated and stored")
-                                            st.session_state.change_history.append(
-                                            "• Field `Age (current)` created"
-                                            )
-                                        except Exception as e:
-                                            st.error(f"Error calculating age (current) {e}")
-                            
-                            if selected_column == "Age Group (current)":
-                                st.markdown("""
-                                `Age Group (current)` needs `Age (current)` column and will gorup it based on this range:
-                                - 18-24
-                                - 25-34
-                                - 35-44
-                                - 45-54
-                                - 55-64
-                                - 65+
-                                """)
-                                age_group = st.selectbox("Choose field that represents `Age (current)`", options=[""] + list(df.columns))
-                                if age_group:
-                                    if st.button("Group age (current)"):
-                                        try:
-                                            df_age_group = df.copy()
-                                            df_age_group[age_group] = df_age_group[age_group].astype(int)
-                                            df_age_group["Age group (current)"] = ""
-                                            df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (current)"] = "18-24"
-                                            df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (current)"] = "25-34"
-                                            df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (current)"] = "35-44"
-                                            df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (current)"] = "45-54"
-                                            df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (current)"] = "55-64"
-                                            df_age_group.loc[df_age_group[age_group] >= 65, "Age group (current)"] = "65+"
-                                            df_age_group.loc[df_age_group[age_group] == 0, "Age group (current)"] = "NA"
-                                            st.dataframe(df_age_group[[age_group, "Age group (current)"]])
-                                            st.session_state.df = df_age_group
-                                            st.success("Age group (current) successfully calculated and stored")
-                                            st.session_state.change_history.append(
-                                            "• Field `Age Group (current)` created"
-                                            )
-                                        except Exception as e:
-                                            st.error(f"Error calculating age {e}")
-                                            
-                            if selected_column == "Age (order)":
-                                st.markdown("""
-                                `Age (order)` needs `Birth Date` and `Policy Order Date`/`Period From` column and will do this calculation:
-                                - Policy order date - birth date
-                                """)
-                                dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
-                                policy = st.selectbox("Choose field that represents `policy order date`/`period from`", options=[""] + list(df.columns))
-                                if dob:
-                                    if st.button("Calculate age based on order"):
-                                        try:
-                                            df_age = df.copy()
-                                            df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
-                                            df_age[policy] = pd.to_datetime(df_age[policy], errors='coerce')
-                                            
-                                            df_age["Age (order)"] = (df_age[policy] - df_age[dob]).dt.days / 365.25
-                                            df_age["Age (order)"] = df_age["Age (order)"].round(0)
-                                    
-                                            df_age["Age (order)"].loc[df_age["Age (order)"] > 99] = 0
-                                            df_age["Age (order)"].loc[df_age["Age (order)"] < 17] = 0
-                                    
-                                            st.dataframe(df_age[[dob, policy, "Age (order)"]])
-                                            st.session_state.df = df_age
-                                            st.success("Age (order) successfully calculated and stored")
-                                            st.session_state.change_history.append(
-                                            "• Field `Age (order)` created"
-                                            )
-                                        except Exception as e:
-                                            st.error(f"Error calculating age (order) {e}")
-                                            
-                            if selected_column == "Age Group (order)":
-                                st.markdown("""
-                                `Age Group (order)` needs `Age (order)` column and will gorup it based on this range:
-                                - 18-24
-                                - 25-34
-                                - 35-44
-                                - 45-54
-                                - 55-64
-                                - 65+
-                                """)
-                                age_group = st.selectbox("Choose field that represents `Age (order)`", options=[""] + list(df.columns))
-                                if age_group:
-                                    if st.button("Group age (order)"):
-                                        try:
-                                            df_age_group = df.copy()
-                                            df_age_group[age_group] = df_age_group[age_group].astype(int)
-                                            df_age_group["Age group (order)"] = ""
-                                            df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (order)"] = "18-24"
-                                            df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (order)"] = "25-34"
-                                            df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (order)"] = "35-44"
-                                            df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (order)"] = "45-54"
-                                            df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (order)"] = "55-64"
-                                            df_age_group.loc[df_age_group[age_group] >= 65, "Age group (order)"] = "65+"
-                                            df_age_group.loc[df_age_group[age_group] == 0, "Age group (order)"] = "NA"
-                                            st.dataframe(df_age_group[[age_group, "Age group (order)"]])
-                                            st.session_state.df = df_age_group
-                                            st.success("Age group (order) successfully calculated and stored")
-                                            st.session_state.change_history.append(
-                                            "• Field `Age Group (order)` created"
-                                            )
-                                        except Exception as e:
-                                            st.error(f"Error calculating age {e}")
-                            # indent 7
-                            if selected_column == "Post Code":
-                                st.markdown("""
-                                `Post Code` needs `Address` column and will detect the valid 5 digit number (ignore repeated patterns like 00000).
-                                """)
-                                post_code = st.selectbox("Choose field that represents address", options=[""] + list(df.columns))
-                                if post_code:
-                                    if st.button("Extract post code"):
-                                        df_post = df.copy()
-                                        def extract_postcode(text):
-                                            if pd.isna(text):
-                                                return ""
-                                            text = str(text)
-                                            matches = re.findall(r"\b\d{5}\b", text)
-                                            for code in matches:
-                                                if len(set(code)) > 2:
-                                                    return code
-                                            return ""
-                                        df_post["Post Code"] = df_post[post_code].apply(extract_postcode)
-                                        st.dataframe(df_post[[post_code, "Post Code"]])
-                                        st.session_state.df = df_post
-                                        st.success("Post code extracted successfully")
+                                        st.session_state.df = df_calc
+                                        st.success("`Tahun periode polis` successfully calculated and stored")
                                         st.session_state.change_history.append(
-                                            "• Field `Post Code` created"
+                                        "• Field `Tahun Periode Polis` created"
                                         )
+                                    except Exception as e:
+                                        st.error(f"Error calculating tahun {e}")
 
-                            if selected_column == "Kota/Kab.":
-                                st.markdown("""
-                                `Kota/Kab.` needs `Post Code` column and will do the mapping.
-                                """)
-                                kota = st.selectbox("Choose field that represents post code", options=[""] + list(df.columns))
-                                if kota:
-                                    if st.button("City mapping"):
-                                        df_kota = df.copy()
-                                        kodepos = {
+                        # DONE
+                        if selected_column == "Age (current)":
+                            st.markdown("""
+                            `Age (current)` needs `Birth Date` column and will do this calculation:
+                            - Date today-Birth date
+                            """)
+                            dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
+                            if dob:
+                                if st.button("Calculate current age"):
+                                    try:
+                                        df_age = df.copy()
+                                        df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
+                                        today = pd.to_datetime("today")
+                                        df_age["Age (current)"] = (today - df_age[dob]).dt.days / 365.25
+                                        df_age["Age (current)"] = df_age["Age (current)"].round(0)
+                                    
+                                        df_age["Age (current)"].loc[df_age["Age (current)"] > 99] = 0
+                                        df_age["Age (current)"].loc[df_age["Age (current)"] < 17] = 0
+                                    
+                                        st.dataframe(df_age[[dob, "Age (current)"]])
+                                        st.session_state.df = df_age
+                                        st.success("Age (current) successfully calculated and stored")
+                                        st.session_state.change_history.append(
+                                        "• Field `Age (current)` created"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Error calculating age (current) {e}")
+                        # indent 6                            
+                        if selected_column == "Age Group (current)":
+                            st.markdown("""
+                            `Age Group (current)` needs `Age (current)` column and will gorup it based on this range:
+                            - 18-24
+                            - 25-34
+                            - 35-44
+                            - 45-54
+                            - 55-64
+                            - 65+
+                            """)
+                            age_group = st.selectbox("Choose field that represents `Age (current)`", options=[""] + list(df.columns))
+                            if age_group:
+                                if st.button("Group age (current)"):
+                                    try:
+                                        df_age_group = df.copy()
+                                        df_age_group[age_group] = df_age_group[age_group].astype(int)
+                                        df_age_group["Age group (current)"] = ""
+                                        df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (current)"] = "18-24"
+                                        df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (current)"] = "25-34"
+                                        df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (current)"] = "35-44"
+                                        df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (current)"] = "45-54"
+                                        df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (current)"] = "55-64"
+                                        df_age_group.loc[df_age_group[age_group] >= 65, "Age group (current)"] = "65+"
+                                        df_age_group.loc[df_age_group[age_group] == 0, "Age group (current)"] = "NA"
+                                        st.dataframe(df_age_group[[age_group, "Age group (current)"]])
+                                        st.session_state.df = df_age_group
+                                        st.success("Age group (current) successfully calculated and stored")
+                                        st.session_state.change_history.append(
+                                        "• Field `Age Group (current)` created"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Error calculating age {e}")
+                                            
+                        if selected_column == "Age (order)":
+                            st.markdown("""
+                            `Age (order)` needs `Birth Date` and `Policy Order Date`/`Period From` column and will do this calculation:
+                            - Policy order date - birth date
+                            """)
+                            dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
+                            policy = st.selectbox("Choose field that represents `policy order date`/`period from`", options=[""] + list(df.columns))
+                            if dob:
+                                if st.button("Calculate age based on order"):
+                                    try:
+                                        df_age = df.copy()
+                                        df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
+                                        df_age[policy] = pd.to_datetime(df_age[policy], errors='coerce')
+                                            
+                                        df_age["Age (order)"] = (df_age[policy] - df_age[dob]).dt.days / 365.25
+                                        df_age["Age (order)"] = df_age["Age (order)"].round(0)
+                                    
+                                        df_age["Age (order)"].loc[df_age["Age (order)"] > 99] = 0
+                                        df_age["Age (order)"].loc[df_age["Age (order)"] < 17] = 0
+                                    
+                                        st.dataframe(df_age[[dob, policy, "Age (order)"]])
+                                        st.session_state.df = df_age
+                                        st.success("Age (order) successfully calculated and stored")
+                                        st.session_state.change_history.append(
+                                        "• Field `Age (order)` created"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Error calculating age (order) {e}")
+                                            
+                        if selected_column == "Age Group (order)":
+                            st.markdown("""
+                            `Age Group (order)` needs `Age (order)` column and will gorup it based on this range:
+                            - 18-24
+                            - 25-34
+                            - 35-44
+                            - 45-54
+                            - 55-64
+                            - 65+
+                            """)
+                            age_group = st.selectbox("Choose field that represents `Age (order)`", options=[""] + list(df.columns))
+                            if age_group:
+                                if st.button("Group age (order)"):
+                                    try:
+                                        df_age_group = df.copy()
+                                        df_age_group[age_group] = df_age_group[age_group].astype(int)
+                                        df_age_group["Age group (order)"] = ""
+                                        df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (order)"] = "18-24"
+                                        df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (order)"] = "25-34"
+                                        df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (order)"] = "35-44"
+                                        df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (order)"] = "45-54"
+                                        df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (order)"] = "55-64"
+                                        df_age_group.loc[df_age_group[age_group] >= 65, "Age group (order)"] = "65+"
+                                        df_age_group.loc[df_age_group[age_group] == 0, "Age group (order)"] = "NA"
+                                        st.dataframe(df_age_group[[age_group, "Age group (order)"]])
+                                        st.session_state.df = df_age_group
+                                        st.success("Age group (order) successfully calculated and stored")
+                                        st.session_state.change_history.append(
+                                        "• Field `Age Group (order)` created"
+                                        )
+                                    except Exception as e:
+                                        st.error(f"Error calculating age {e}")
+                        # indent 6
+                        if selected_column == "Post Code":
+                            st.markdown("""
+                            `Post Code` needs `Address` column and will detect the valid 5 digit number (ignore repeated patterns like 00000).
+                            """)
+                            post_code = st.selectbox("Choose field that represents address", options=[""] + list(df.columns))
+                            if post_code:
+                                if st.button("Extract post code"):
+                                    df_post = df.copy()
+                                    def extract_postcode(text):
+                                        if pd.isna(text):
+                                            return ""
+                                        text = str(text)
+                                        matches = re.findall(r"\b\d{5}\b", text)
+                                        for code in matches:
+                                            if len(set(code)) > 2:
+                                                return code
+                                        return ""
+                                    df_post["Post Code"] = df_post[post_code].apply(extract_postcode)
+                                    st.dataframe(df_post[[post_code, "Post Code"]])
+                                    st.session_state.df = df_post
+                                    st.success("Post code extracted successfully")
+                                    st.session_state.change_history.append(
+                                        "• Field `Post Code` created"
+                                    )
+                                    
+                        # indent 6
+                        if selected_column == "Kota/Kab.":
+                            st.markdown("""
+                            `Kota/Kab.` needs `Post Code` column and will do the mapping.
+                            """)
+                            kota = st.selectbox("Choose field that represents post code", options=[""] + list(df.columns))
+                            if kota:
+                                if st.button("City mapping"):
+                                    df_kota = df.copy()
+                                    kodepos = {
                                     '236' : 'Kab. Aceh Barat', '2376':'Kab. Aceh Barat Daya', '233' : 'Kab. Aceh Besar', '234' : 'Kab. Aceh Besar','235' : 'Kab. Aceh Besar',
                                            '236' : 'Kab. Aceh Besar','237' : 'Kab. Aceh Besar', '238' : 'Kab. Aceh Besar', '239' : 'Kab. Aceh Besar',
                                     '2365' : 'Kab. Aceh Jaya', '237': 'Kab. Aceh Selatan', '247': 'Kab. Aceh Singkil','2447': 'Kab. Aceh Tamiang','245': 'Kab. Aceh Tengah','2466': 'Kab. Aceh Tenggara',
@@ -656,36 +661,38 @@ if uploaded_file:
                                             '301': 'Palembang', '302': 'Palembang', '941': 'Palu', '942': 'Palu',
                                             '281': 'Pekanbaru', '282': 'Pekanbaru',  '781': 'Pontianak', '782': 'Pontianak', '411': 'Purwakarta', '1511': 'Tangerang','1512': 'Tangerang', '1513': 'Tangerang', '1514': 'Tangerang', '1515': 'Tangerang', '158': 'Kab. Tangerang', '152': 'Tangerang Selatan','153': 'Tangerang Selatan','154': 'Tangerang Selatan', '551': 'Yogyakarta','552': 'Yogyakarta', '521': 'Tegal', '522': 'Kab. Tegal', '523': 'Kab. Tegal', '524': 'Kab. Tegal'
                                         }
-                                        def map_postal_code(postal):
-                                            if pd.isna(postal) or postal=="NA" or postal=="NAN" or postal==0 or postal=="" or postal==None or postal=="0":
-                                                return "NA"
-                                            postal = str(postal)
-                                            prefix3 = postal[:3]  
-                                            if prefix3 in kodepos:
-                                                return kodepos[prefix3]
-                                            prefix4 = postal[:4]
-                                            if prefix4 in kodepos:
-                                                return kodepos[prefix4]
-                                            #return kodepos.get(prefix3, postal) 
-                                            return "Unknown"
+                                    def map_postal_code(postal):
+                                        if pd.isna(postal) or postal=="NA" or postal=="NAN" or postal==0 or postal=="" or postal==None or postal=="0":
+                                            return "NA"
+                                        postal = str(postal)
+                                        
+                                        prefix3 = postal[:3]  
+                                        if prefix3 in kodepos:
+                                            return kodepos[prefix3]
                                             
-                                        df_kota['Kota/Kab.'] = df_kota[kota].apply(map_postal_code)
-                                        st.dataframe(df_kota[[kota, "Kota/Kab."]])
-                                        st.session_state.df = df_kota
-                                        st.success("Kota mapped successfully")
-                                        st.session_state.change_history.append(
-                                            "• Field `Kota/Kab.` created"
-                                        )
-                            # indent 7
-                            if selected_column == "Provinsi":
-                                st.markdown("""
-                                `Provinsi` needs `Post Code` column and will do the mapping.
-                                """)
-                                prov = st.selectbox("Choose field that represents `post code`", options=[""] + list(df.columns))
-                                if prov:
-                                    if st.button("Provinsi mapping"):
-                                        df_prov = df.copy()
-                                        kode_pos_prov = {'23':'Aceh', '24':'Aceh', '80':'Bali', '81':'Bali', '82':'Bali', '15':'Banten', '42':'Banten', '38':'Bengkulu',
+                                        prefix4 = postal[:4]
+                                        if prefix4 in kodepos:
+                                            return kodepos[prefix4]
+                                        #return kodepos.get(prefix3, postal) 
+                                        return "Unknown"
+                                            
+                                    df_kota['Kota/Kab.'] = df_kota[kota].apply(map_postal_code)
+                                    st.dataframe(df_kota[[kota, "Kota/Kab."]])
+                                    st.session_state.df = df_kota
+                                    st.success("Kota mapped successfully")
+                                    st.session_state.change_history.append(
+                                        "• Field `Kota/Kab.` created"
+                                    )
+                        # indent 6
+                        if selected_column == "Provinsi":
+                            st.markdown("""
+                            `Provinsi` needs `Post Code` column and will do the mapping.
+                            """)
+                            prov = st.selectbox("Choose field that represents `post code`", options=[""] + list(df.columns))
+                            if prov:
+                                if st.button("Provinsi mapping"):
+                                    df_prov = df.copy()
+                                    kode_pos_prov = {'23':'Aceh', '24':'Aceh', '80':'Bali', '81':'Bali', '82':'Bali', '15':'Banten', '42':'Banten', '38':'Bengkulu',
                                                  '39':'Bengkulu', '55':'DI Yogyakarta','10':'DKI Jakarta', '11':'DKI Jakarta', '12':'DKI Jakarta',
                                                  '13':'DKI Jakarta', '14':'DKI Jakarta','96':'Gorontalo','36':'Jambi', '37':'Jambi',
                                                  '16':'Jawa Barat', '17':'Jawa Barat', '40': 'Jawa Barat',
@@ -714,86 +721,90 @@ if uploaded_file:
                                                  '27':'Sumatera Barat','30':'Sumatera Selatan','31':'Sumatera Selatan','32':'Sumatera Selatan',
                                                  '20':'Sumatera Utara','21':'Sumatera Utara','22':'Sumatera Utara'
                                                 }
-                                        def map_postal_code(postal):
-                                            if pd.isna(postal) or postal=="NA" or postal=="NAN" or postal==0 or postal=="" or postal==None or postal=="0":
-                                                return "NA"
-                                            postal = str(postal)
-                                            prefix3 = postal[:3]  
-                                            if prefix3 in kode_pos_prov:
-                                                return kode_pos_prov[prefix3]
-                                            prefix2 = postal[:2]
-                                            if prefix2 in kode_pos_prov:
-                                                return kode_pos_prov[prefix2]
+                                    def map_postal_code(postal):
+                                        if pd.isna(postal) or postal=="NA" or postal=="NAN" or postal==0 or postal=="" or postal==None or postal=="0":
+                                            return "NA"
+                                        postal = str(postal)
+                                        prefix3 = postal[:3]  
+                                        if prefix3 in kode_pos_prov:
+                                            return kode_pos_prov[prefix3]
+                                        prefix2 = postal[:2]
+                                        if prefix2 in kode_pos_prov:
+                                            return kode_pos_prov[prefix2]
                                         
-                                            return "Unknown"
-                                        df_prov['Provinsi'] = df_prov[prov].apply(map_postal_code)
-                                        st.dataframe(df_prov[[prov, "Provinsi"]])
-                                        st.session_state.df = df_prov
-                                        st.success("Province mapped successfully")
-                                        st.session_state.change_history.append(
-                                            "• Field `Province` created"
-                                        ) 
-                            # indent 7
-                            if selected_column == "Chassis Number":
-                                st.markdown("""
-                                `Chassis Number` needs `Chassis Number` column and will do the validation.
-                                """)
-                                chas = st.selectbox("Choose field that represents chassis number", options=[""] + list(df.columns))
-                                if chas:
-                                    if st.button("Chassis validation"):
-                                        df_chassis = df.copy()
-                                        def validate_chassis(chassis):
-                                            if pd.isna(chassis):
-                                                return "Invalid: empty"
-                                            chassis = str(chassis)
-                                            if re.search(r'(\d)\1{5,}', chassis):
-                                                return 'Invalid: repeated digits'
-                                            if not len(chassis) == 17:
-                                                return f"Invalid: Length {len(chassis)}"
+                                        return "Unknown"
+                                        
+                                    df_prov['Provinsi'] = df_prov[prov].apply(map_postal_code)
+                                    st.dataframe(df_prov[[prov, "Provinsi"]])
+                                    st.session_state.df = df_prov
+                                    st.success("Province mapped successfully")
+                                    st.session_state.change_history.append(
+                                        "• Field `Province` created"
+                                    ) 
+                                                            
+                        # indent 6
+                        if selected_column == "Chassis Number":
+                            st.markdown("""
+                            `Chassis Number` needs `Chassis Number` column and will do the validation.
+                            """)
+                            chas = st.selectbox("Choose field that represents chassis number", options=[""] + list(df.columns))
+                            if chas:
+                                if st.button("Chassis validation"):
+                                    df_chassis = df.copy()
+                                    def validate_chassis(chassis):
+                                        if pd.isna(chassis):
+                                            return "Invalid: empty"
+                                        chassis = str(chassis)
+                                        if re.search(r'(\d)\1{5,}', chassis):
+                                            return 'Invalid: repeated digits'
+                                        if not len(chassis) == 17:
+                                            return f"Invalid: Length {len(chassis)}"
 
-                                            return chassis
-                                        df_chassis[f"{chas}_val"] = df_chassis[chas].apply(lambda x: validate_chassis(x))
-                                        st.session_state.df = df_chassis
-                                        st.success("Chassis number validation complete")
-                                        st.dataframe(df_chassis[[chas,f"{chas}_val"]])
-                                        st.session_state.change_history.append(
-                                            "• Field `Chassis Validation` created"
-                                        )
-                            # DONEEEE
-                            if selected_column == "Gross Premi/Year":
-                                st.markdown("""
-                                `Gross Premi/Year` needs `Tahun Periode Polis` and `Gross Premi` column and will calculate Gross Premi based on policy period year.
-                                """)
-                                periode_polis = st.selectbox("Choose field that represents `tahun periode polis`", options=[""]+list(df.columns))
-                                gross_prem = st.selectbox("Choose field that represents `gross premi`", options=[""]+list(df.columns))
-                                if gross_prem:
-                                    if st.button("Calculate gross premi/year"):
-                                        df_prem = df.copy()
-                                        def validate_prem(premi):
-                                            if pd.isna(premi):
-                                                return "Invalid: empty gross premi"
-                                            premi = int(premi)
-                                            return premi
-                                        def validate_period(period):
-                                            if pd.isna(period):
-                                                return "Invalid: empty policy period in year"
-                                            period = int(period)
-                                            return period
+                                        return chassis
+                                    df_chassis[f"{chas}_val"] = df_chassis[chas].apply(lambda x: validate_chassis(x))
+                                    st.session_state.df = df_chassis
+                                    st.success("Chassis number validation complete")
+                                    st.dataframe(df_chassis[[chas,f"{chas}_val"]])
+                                    st.session_state.change_history.append(
+                                        "• Field `Chassis Validation` created"
+                                    )
+                        # indent 6 
+                        if selected_column == "Gross Premi/Year":
+                            st.markdown("""
+                            `Gross Premi/Year` needs `Tahun Periode Polis` and `Gross Premi` column and will calculate Gross Premi based on policy period year.
+                            """)
+                            periode_polis = st.selectbox("Choose field that represents `tahun periode polis`", options=[""]+list(df.columns))
+                            gross_prem = st.selectbox("Choose field that represents `gross premi`", options=[""]+list(df.columns))
+                            if gross_prem:
+                                if st.button("Calculate gross premi/year"):
+                                    df_prem = df.copy()
+                                    def validate_prem(premi):
+                                        if pd.isna(premi):
+                                            return "Invalid: empty gross premi"
+                                        premi = int(premi)
+                                        return premi
                                     
-                                        premi = df_prem[gross_prem].apply(lambda x: validate_prem(x))
-                                        period = df_prem[periode_polis].apply(lambda x: validate_period(x))
+                                    def validate_period(period):
+                                        if pd.isna(period):
+                                            return "Invalid: empty policy period in year"
+                                        period = int(period)
+                                        return period
+                                    
+                                    premi = df_prem[gross_prem].apply(lambda x: validate_prem(x))
+                                    period = df_prem[periode_polis].apply(lambda x: validate_period(x))
                                 
-                                        df_prem["Gross Premi/Year"] = premi/period
-                                        st.session_state.df = df_prem
-                                        st.success("Gross premi/year successfully calculated")
-                                        st.dataframe(df_prem[[periode_polis,gross_prem,"Gross Premi/Year"]].head(20))
-                                        st.session_state.change_history.append(
-                                            "• Field `Gross Premi/Year` created"
-                                        )
-                            # DONE
-                            if selected_column == 'Grouping Gross Premi/Year':
-                                st.markdown("""
-                                `Grouping Gross Premi/Year` needs `Gross Premi/Year` column and will group it based on this segmentation:
+                                    df_prem["Gross Premi/Year"] = premi/period
+                                    st.session_state.df = df_prem
+                                    st.success("Gross premi/year successfully calculated")
+                                    st.dataframe(df_prem[[periode_polis,gross_prem,"Gross Premi/Year"]].head(20))
+                                    st.session_state.change_history.append(
+                                        "• Field `Gross Premi/Year` created"
+                                    )
+                        
+                        # indent 6
+                        if selected_column == 'Grouping Gross Premi/Year':
+                            st.markdown("""
+                            `Grouping Gross Premi/Year` needs `Gross Premi/Year` column and will group it based on this segmentation:
                                 - < 1jt
                                 - 1-5jt
                                 - 5-10jt
@@ -801,80 +812,81 @@ if uploaded_file:
                                 - 15-20jt
                                 - 20-25jt
                                 - 25-30jt
-                                - '> 30jt
-                                """)
-                                group_premi = st.selectbox("Choose field that represents `Gross Premi/Year`", options=[""]+list(df.columns))
-                                if group_premi:
-                                    if st.button("Group gross premi/year"):
-                                        df_group_prem = df.copy()
-                                        def grouping_premi(premi):
-                                            premi = pd.to_numeric(premi, errors="coerce")
-                                            if pd.isna(premi):
-                                                return "Invalid: empty gross premi/year"
-                                            elif premi < 1000000:
-                                                return '< 1jt'
-                                            elif 1000000 <= premi < 5000000:
-                                                return '1-5jt'
-                                            elif 5000000 <= premi < 10000000:
-                                                return '5-10jt'
-                                            elif 10000000 <= premi < 15000000:
-                                                return '10-15jt'
-                                            elif 15000000 <= premi < 20000000:
-                                                return '15-20jt'
-                                            elif 20000000 <= premi < 25000000:
-                                                return '20-25jt'
-                                            elif 25000000 <= premi < 30000000:
-                                                return '25-30jt'
-                                            return '> 30jt'
-                                        df_group_prem['Grouping Gross Premi/Year'] = df_group_prem[group_premi].apply(grouping_premi)
+                                - 30jt+
+                            """)
+                            group_premi = st.selectbox("Choose field that represents `Gross Premi/Year`", options=[""]+list(df.columns))
+                            if group_premi:
+                                if st.button("Group gross premi/year"):
+                                    df_group_prem = df.copy()
+                                    def grouping_premi(premi):
+                                        premi = pd.to_numeric(premi, errors="coerce")
+                                        if pd.isna(premi):
+                                            return "Invalid: empty gross premi/year"
+                                        elif premi < 1000000:
+                                            return '< 1jt'
+                                        elif 1000000 <= premi < 5000000:
+                                            return '1-5jt'
+                                        elif 5000000 <= premi < 10000000:
+                                            return '5-10jt'
+                                        elif 10000000 <= premi < 15000000:
+                                            return '10-15jt'
+                                        elif 15000000 <= premi < 20000000:
+                                            return '15-20jt'
+                                        elif 20000000 <= premi < 25000000:
+                                            return '20-25jt'
+                                        elif 25000000 <= premi < 30000000:
+                                            return '25-30jt'
+                                        return '30jt+'
+                                       
+                                    df_group_prem['Grouping Gross Premi/Year'] = df_group_prem[group_premi].apply(grouping_premi)
                                 
-                                        st.session_state.df = df_group_prem
-                                        st.success("Grouping gross premi/year successfully created")
-                                        st.dataframe(df_group_prem[[group_premi,"Grouping Gross Premi/Year"]])
-                                        st.session_state.change_history.append(
-                                            "• Field `Grouping Gross Premi/Year` created"
-                                        )
-                    
-                            if selected_column == 'Grouping Sum Insured':
-                                st.markdown("""
-                                `Grouping Sum Insured` needs `Sum Insured` column and will group it based on this segmentation:
-                                - < 100jt
-                                - 100-125jt
-                                - 125-200jt
-                                - 200-400jt
-                                - 400-800jt
-                                - 800jt-1.5m
-                                - '> 1.5m
-                                """)
-                                group_tsi = st.selectbox("Choose field that represents `Sum Insured`", options=[""]+list(df.columns))
-                                if group_tsi:
-                                    if st.button("Group sum insured"):
-                                        df_group_tsi = df.copy()
-                                        def grouping_tsi(tsi):
-                                            tsi = pd.to_numeric(tsi, errors="coerce")
-                                            if pd.isna(tsi):
-                                                return "Invalid: empty sum insured"
-                                            elif tsi < 100000000:
-                                                return '< 100jt'
-                                            elif 100000000 <= tsi < 125000000:
-                                                return '100-125jt'
-                                            elif 125000000 <= tsi < 200000000:
-                                                return '125-200jt'
-                                            elif 200000000 <= tsi < 400000000:
-                                                return '200-400jt'
-                                            elif 400000000 <= tsi < 800000000:
-                                                return '400-800jt'
-                                            elif 800000000 <= tsi < 1500000000:
-                                                return '800jt-1.5m'
-                                            return '> 1.5m'
-                                        df_group_tsi['Grouping Sum Insured'] = df_group_tsi[group_tsi].apply(grouping_tsi)
+                                    st.session_state.df = df_group_prem
+                                    st.success("Grouping gross premi/year successfully created")
+                                    st.dataframe(df_group_prem[[group_premi,"Grouping Gross Premi/Year"]])
+                                    st.session_state.change_history.append(
+                                        "• Field `Grouping Gross Premi/Year` created"
+                                    )
+                                            
+                        if selected_column == 'Grouping Sum Insured':
+                            st.markdown("""
+                            `Grouping Sum Insured` needs `Sum Insured` column and will group it based on this segmentation:
+                            - < 100jt
+                            - 100-125jt
+                            - 125-200jt
+                            - 200-400jt
+                            - 400-800jt
+                            - 800jt-1.5m
+                            - 1.5m+
+                            """)
+                            group_tsi = st.selectbox("Choose field that represents `Sum Insured`", options=[""]+list(df.columns))
+                            if group_tsi:
+                                if st.button("Group sum insured"):
+                                    df_group_tsi = df.copy()
+                                    def grouping_tsi(tsi):
+                                        tsi = pd.to_numeric(tsi, errors="coerce")
+                                        if pd.isna(tsi):
+                                            return "Invalid: empty sum insured"
+                                        elif tsi < 100000000:
+                                            return '< 100jt'
+                                        elif 100000000 <= tsi < 125000000:
+                                            return '100-125jt'
+                                        elif 125000000 <= tsi < 200000000:
+                                            return '125-200jt'
+                                        elif 200000000 <= tsi < 400000000:
+                                            return '200-400jt'
+                                        elif 400000000 <= tsi < 800000000:
+                                            return '400-800jt'
+                                        elif 800000000 <= tsi < 1500000000:
+                                            return '800jt-1.5m'
+                                        return '1.5m+'
+                                    df_group_tsi['Grouping Sum Insured'] = df_group_tsi[group_tsi].apply(grouping_tsi)
                                 
-                                        st.session_state.df = df_group_tsi
-                                        st.success("Grouping sum insured successfully created")
-                                        st.dataframe(df_group_tsi[[group_tsi,"Grouping Sum Insured"]])
-                                        st.session_state.change_history.append(
-                                            "• Field `Grouping Sum Insured` created"
-                                        )
+                                    st.session_state.df = df_group_tsi
+                                    st.success("Grouping sum insured successfully created")
+                                    st.dataframe(df_group_tsi[[group_tsi,"Grouping Sum Insured"]])
+                                    st.session_state.change_history.append(
+                                        "• Field `Grouping Sum Insured` created"
+                                    )
                                                     
                     # indent: 5     
                     st.markdown("**History Changes:**")
