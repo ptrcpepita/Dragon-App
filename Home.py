@@ -1,27 +1,25 @@
 import streamlit as st
-import base64
-from pathlib import Path
 
 st.set_page_config(page_title="home", layout="wide")
 
-#st.markdown(
-       # """
-       # <style>
-       #     [data-testid = "stSidebarNav"]{
-       #     background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
-       #     background-repeat: no-repeat;
-       #     background-size: 210px;
-       #     padding-top: 100px;
-       #     background-position: 0px 0px;
-       #     }
-        #</style>
-       # """, unsafe_allow_html=True,
-  #  )
+st.markdown(
+        """
+        <style>
+            [data-testid = "stSidebarNav"]{
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon_logo_png.png");
+            background-repeat: no-repeat;
+            background-size: 210px;
+            padding-top: 100px;
+            background-position: 0px 0px;
+            }
+        </style>
+        """, unsafe_allow_html=True,
+    )
 
 st.markdown(
     """
     <div style="margin-left: -7px;">
-        <img src="https://raw.githubusercontent.com/ptrcp/dragon_app/70f79ea1fd389a3822f3ce8f0a351762de1fbf39/dragon2_logo_png.png" width="500">
+        <img src="https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon2_logo_png.png" width="500">
     </div>
     """,
     unsafe_allow_html=True
@@ -58,6 +56,3 @@ st.markdown("""
 st.markdown("")
 st.markdown("")
 st.markdown("""###### Users are able to use the feature independently, but it is recommended to use it based on feature order (transform -> filter -> visualize).""")
-
-
-            
