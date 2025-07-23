@@ -4,19 +4,19 @@ from pathlib import Path
 
 st.set_page_config(page_title="home", layout="wide")
 
-st.markdown(
-        """
-        <style>
-            [data-testid = "stSidebarNav"]{
-            background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
-            background-repeat: no-repeat;
-            background-size: 210px;
-            padding-top: 100px;
-            background-position: 0px 0px;
-            }
-        </style>
-        """, unsafe_allow_html=True,
-    )
+#st.markdown(
+       # """
+       # <style>
+       #     [data-testid = "stSidebarNav"]{
+       #     background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
+       #     background-repeat: no-repeat;
+       #     background-size: 210px;
+       #     padding-top: 100px;
+       #     background-position: 0px 0px;
+       #     }
+        #</style>
+       # """, unsafe_allow_html=True,
+  #  )
 
 st.markdown(
     """
