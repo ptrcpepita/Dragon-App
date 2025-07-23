@@ -18,7 +18,7 @@ st.markdown(
     )
 
 st.markdown("## 📊 Data Visualization")
-st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_visualization.png", width=700)
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/86e4aa03a4ed44ae49f7f60eb07301c143749ce4/asset/userflow_visualization.png", width=700)
 
 # Upload & Plot Button
 st.markdown("---")
