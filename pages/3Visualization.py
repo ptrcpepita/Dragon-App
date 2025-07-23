@@ -7,7 +7,7 @@ st.markdown(
         """
         <style>
             [data-testid = "stSidebarNav"]{
-            background-image: url("https://raw.githubusercontent.com/ptrcp/dragon_app/ddcfeac3b8da8cdd70b8047bbab42f643dc6572a/dragon_logo_png.png");
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon_logo_png.png");
             background-repeat: no-repeat;
             background-size: 210px;
             padding-top: 100px;
@@ -18,24 +18,19 @@ st.markdown(
     )
 
 st.markdown("## 📊 Data Visualization")
-st.image("https://raw.githubusercontent.com/ptrcp/dragon_app/13a79db87cb94c6eef728c60f2464c3a7cd72c52/userflow_visualization.png", width=700)
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_visualization.png", width=700)
 
 # Upload & Plot Button
 st.markdown("---")
 st.subheader("📂 Upload an Excel File")
-uploaded_file = st.file_uploader("Upload file", type=["xls", "xlsx", "csv"])
+uploaded_file = st.file_uploader("Upload file", type=["xlsx", "csv"])
 if uploaded_file:
-    #if uploaded_file in [".xls", ".xlsx"]:
-    df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
-    #else:
-        #df = pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
-                
-    #df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file)
+    df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
     st.session_state.original_df = df
     if st.button("Visualize data ⏭️"):
         st.session_state.plot_clicked = True
         st.session_state.df = df.copy()
-    if st.button("Comparison chart ⏭️"): #NEWWWW
+    if st.button("Comparison chart ⏭️"): 
         st.session_state.plot_clicked = False
         st.session_state.df = df.copy()
 else:
@@ -44,7 +39,7 @@ else:
 # Setelah klik Plot Data
 if st.session_state.get("plot_clicked"):
     st.markdown("---")
-    st.subheader("📊 Data Visualization")
+    st.subheader("📊 Visualize Data")
 
     # Sidebar
     with st.sidebar:
@@ -303,6 +298,3 @@ elif st.session_state.get("plot_clicked") == False:
     if st.button("🔄🔄 Reset All"):
         st.session_state.clear()
         st.rerun()           
-                        
-        
-    
