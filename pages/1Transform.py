@@ -6,6 +6,8 @@ from io import BytesIO
 import re
 from datetime import datetime
 import xlsxwriter
+import requests
+import os
 
 st.markdown(
         """
@@ -45,31 +47,59 @@ st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d
 
 # 1. UPLOAD DATA
 st.markdown("---")
-st.subheader("📂 1. Upload an Excel File")
-uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
-st.write("Please upload file below 150 MB")
+st.subheader("📂 1. Paste an Excel File Link")
 
-current_file_name = uploaded_file.name if uploaded_file else None
-if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
-    and st.session_state.uploaded_file_name != current_file_name):
+url = st.text_input("Paste the public Excel file URL here (format = one drive link + '&download=1'):")
+
+current_file_name = os.path.basename(url) if url else None
+if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
+    and st.session_state.url_name != current_file_name):
     for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
         st.session_state.pop(key, None)
-    st.session_state.uploaded_file_name = current_file_name
+    st.session_state.url_name = current_file_name
     
-elif uploaded_file and "uploaded_file_name" not in st.session_state:
+elif url and "url_name" not in st.session_state:
     st.session_state.uploaded_file_name = current_file_name
+
+# 1. UPLOAD DATA
+# st.markdown("---")
+# st.subheader("📂 1. Upload an Excel File")
+# uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
+# st.write("Please upload file below 150 MB")
+
+# current_file_name = uploaded_file.name if uploaded_file else None
+# if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
+   # and st.session_state.uploaded_file_name != current_file_name):
+   # for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
+       # st.session_state.pop(key, None)
+   # st.session_state.uploaded_file_name = current_file_name
+    
+# elif uploaded_file and "uploaded_file_name" not in st.session_state:
+   # st.session_state.uploaded_file_name = current_file_name
         
-if uploaded_file:
+# if uploaded_file:
+   # try:
+       # if "original_df" not in st.session_state:
+          #  df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            
+          #  st.session_state.original_df = df.copy() # original data
+          #  st.session_state.df = df.copy() # ini working copy yang user akan pake
+          #  # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
+          #  st.session_state.change_history = []
+          #  st.success("Dataset loaded successfully. Click button below to transform the data")
+
+if url:
     try:
         if "original_df" not in st.session_state:
-            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            response = requests.get(url)
+            response.raise_for_status()  # Raise error for bad status
+            df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}
             
             st.session_state.original_df = df.copy() # original data
-            st.session_state.df = df.copy() # ini working copy yang user akan pake
-            # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
+            st.session_state.df = df.copy() # working copy yang user akan pake
             st.session_state.change_history = []
             st.success("Dataset loaded successfully. Click button below to transform the data")
-
+        
         # 2. PREVIEW DATA
         # indent: 2
         if st.button('Preview Data ⏭️'):
@@ -1046,7 +1076,7 @@ if uploaded_file:
                                             processed_data = output.getvalue()
                 
                                         if st.download_button(label="Download as Excel", data=processed_data,
-                                                   file_name=f"transformed_{uploaded_file.name}.xlsx",
+                                                   file_name="transformed_dataframe.xlsx",
                                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
                                             st.success("Dataset successfully saved.")
                                     except Exception as e:
