@@ -80,8 +80,10 @@ if uploaded_file:
             st.markdown("---")
             st.subheader('📈 2. Preview Data')
             st.write("**Data shape:**", df_original.shape)
-            st.write("**Data:**")
-            st.dataframe(df_original)
+            st.write("**First 10 Data Rows:**")
+            st.dataframe(df_original.head(10))
+            st.write("**Last 10 Data Rows:**")
+            st.dataframe(df_original.tail(10))
 
             info_df = pd.DataFrame({"Column": df_original.columns,
                                     "Non-Null Count": df_original.notnull().sum().values,
