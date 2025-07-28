@@ -948,12 +948,12 @@ if url:
                         st.markdown("---")
                         st.subheader('📊 5. Preview Data')
                         st.write("**Data shape:**", df.shape)
-                        # st.write("**First 5 Rows:**")
-                        # st.dataframe(df.head())
-                        # st.write("**Last 5 Rows:**")
-                        # st.dataframe(df.tail())
-                        st.write("**All Data Row:**")
-                        st.dataframe(df)
+                        st.write("**First 10 Rows:**")
+                        st.dataframe(df.head(10))
+                        st.write("**Last 10 Rows:**")
+                        st.dataframe(df.tail(10))
+                        # st.write("**All Data Row:**")
+                        # st.dataframe(df)
             
                         info_df = pd.DataFrame({"Column": df.columns,
                         "Non-Null Count": df.notnull().sum().values,
