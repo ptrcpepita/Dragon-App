@@ -133,7 +133,10 @@ if url:
                 st.markdown("---")
                 st.subheader('✨ 3. Data Cleaning')
                 df = st.session_state.df
-                
+                for col in df.columns:
+                    if df[col].dtype == "object":
+                        df[col] = df[col].astype(str)
+
                 string_cols = df.select_dtypes(include=["object", "string"]).columns.tolist()
                 
                 st.markdown("""
