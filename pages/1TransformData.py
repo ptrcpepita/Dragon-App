@@ -113,8 +113,10 @@ if url:
             st.markdown("---")
             st.subheader('📈 2. Preview Data')
             st.write("**Data shape:**", df_original.shape)
-            st.write("**Data:**")
-            st.dataframe(df_original)
+            st.write("**First 10 Rows:**")
+            st.dataframe(df_original.head(10))
+            st.write("**Last 10 Rows:**")
+            st.dataframe(df_original.tail(10))
 
             info_df = pd.DataFrame({"Column": df_original.columns,
                                     "Non-Null Count": df_original.notnull().sum().values,
@@ -1122,7 +1124,7 @@ if url:
                                             processed_data = output.getvalue()
                 
                                         if st.download_button(label="Download as Excel", data=processed_data,
-                                                   file_name=f"transformed_{os.path.basename(url)}.xlsx",
+                                                   file_name="transformed_dataframe.xlsx",
                                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
                                             st.success("Dataset successfully saved.")
                                     except Exception as e:
