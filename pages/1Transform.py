@@ -978,7 +978,7 @@ if url:
                                 return df.to_csv(index=False).encode("utf-8")
 
                             csv_data = csv_bytes(st.session_state.df)
-                            if st.download_button("📥 Download as CSV", data = csv_data), file_name="transformed_data.csv", mime="text/csv"):
+                            if st.download_button("📥 Download as CSV", data = csv_data, file_name="transformed_data.csv", mime="text/csv"):
                                 st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
                             # st.error(f"❌ Error saving file: {e}")
                 
