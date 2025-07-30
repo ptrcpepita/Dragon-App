@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import io
 from io import BytesIO
-from io import StringIO
+#from io import StringIO
 import re
 from datetime import datetime
 import xlsxwriter
@@ -176,31 +176,31 @@ if url:
                         claim_ratio = st.selectbox("Choose field that represents `Claim Ratio`", options=[""] + list(df.columns))
                         if claim_ratio:
                             if st.button("Group claim ratio"):
-                                try:
+                                #try:
                                     #df_claim_ratio = df.copy()
-                                    df = st.session_state.df
-                                    df[claim_ratio] = df[claim_ratio].astype(float)
-                                    df["Claim Ratio (group)"] = ""
-                                    df.loc[(df[claim_ratio] > 0) & (df[claim_ratio] <= 5), "Claim Ratio (group)"] = "0-5"
-                                    df.loc[(df[claim_ratio] > 5) & (df[claim_ratio] <= 10), "Claim Ratio (group)"] = "5-10"
-                                    df.loc[(df[claim_ratio] > 10) & (df[claim_ratio] <= 30), "Claim Ratio (group)"] = "10-30"
-                                    df.loc[(df[claim_ratio] > 30) & (df[claim_ratio] <= 50), "Claim Ratio (group)"] = "30-50"
-                                    df.loc[(df[claim_ratio] > 50) & (df[claim_ratio] <= 70), "Claim Ratio (group)"] = "50-70"
-                                    df.loc[(df[claim_ratio] > 70) & (df[claim_ratio] <= 90), "Claim Ratio (group)"] = "70-90"
-                                    df.loc[(df[claim_ratio] > 90) & (df[claim_ratio] <= 110), "Claim Ratio (group)"] = "90-110"
-                                    df.loc[(df[claim_ratio] > 110) & (df[claim_ratio] <= 130), "Claim Ratio (group)"] = "110-130"
-                                    df.loc[(df[claim_ratio] > 130) & (df[claim_ratio] <= 150), "Claim Ratio (group)"] = "130-150"
+                                df = st.session_state.df
+                                df[claim_ratio] = df[claim_ratio].astype(float)
+                                df["Claim Ratio (group)"] = ""
+                                df.loc[(df[claim_ratio] > 0) & (df[claim_ratio] <= 5), "Claim Ratio (group)"] = "0-5"
+                                df.loc[(df[claim_ratio] > 5) & (df[claim_ratio] <= 10), "Claim Ratio (group)"] = "5-10"
+                                df.loc[(df[claim_ratio] > 10) & (df[claim_ratio] <= 30), "Claim Ratio (group)"] = "10-30"
+                                df.loc[(df[claim_ratio] > 30) & (df[claim_ratio] <= 50), "Claim Ratio (group)"] = "30-50"
+                                df.loc[(df[claim_ratio] > 50) & (df[claim_ratio] <= 70), "Claim Ratio (group)"] = "50-70"
+                                df.loc[(df[claim_ratio] > 70) & (df[claim_ratio] <= 90), "Claim Ratio (group)"] = "70-90"
+                                df.loc[(df[claim_ratio] > 90) & (df[claim_ratio] <= 110), "Claim Ratio (group)"] = "90-110"
+                                df.loc[(df[claim_ratio] > 110) & (df[claim_ratio] <= 130), "Claim Ratio (group)"] = "110-130"
+                                df.loc[(df[claim_ratio] > 130) & (df[claim_ratio] <= 150), "Claim Ratio (group)"] = "130-150"
                                         
-                                    df.loc[df[claim_ratio] > 150, "Claim Ratio (group)"] = "150+"
-                                    df.loc[df[claim_ratio] == 0, "Claim Ratio (group)"] = "0"
-                                    st.session_state.df = df
-                                    st.dataframe(df[[claim_ratio, "Claim Ratio (group)"]].head())
-                                    st.success("Claim ratio successfully grouped and stored")
-                                    st.session_state.change_history.append(
+                                df.loc[df[claim_ratio] > 150, "Claim Ratio (group)"] = "150+"
+                                df.loc[df[claim_ratio] == 0, "Claim Ratio (group)"] = "0"
+                                st.session_state.df = df
+                                st.dataframe(df[[claim_ratio, "Claim Ratio (group)"]].head())
+                                st.success("Claim ratio successfully grouped and stored")
+                                st.session_state.change_history.append(
                                     "• Field `Claim Ratio (group)` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error grouping claim ratio {e}")
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error grouping claim ratio {e}")
                                                                                                                  
                         # LAST SEGMENT ON PROGRESS (indent=6)
                     if selected_column == "Last Segmen":
@@ -318,123 +318,123 @@ if url:
                         period_to = st.selectbox("Choose field that represents `period to`", options=[""] + list(df.columns))
                         if period_from and period_to:
                             if st.button("Calculate tahun periode polis"):
-                                try:
-                                    df = st.session_state.df
+                                #try:
+                                df = st.session_state.df
                                     #df_calc = df.copy()
-                                    df[period_from] = pd.to_datetime(df[period_from], errors='coerce')
-                                    df[period_to] = pd.to_datetime(df[period_to], errors='coerce')
-                                    df["Tahun Periode Polis"] = (df[period_to] - df[period_from]).dt.days/365
-                                    df["Tahun Periode Polis"] = df["Tahun Periode Polis"].round(1)
-                                    st.session_state.df = df
-                                    st.dataframe(df[[period_from, period_to, "Tahun Periode Polis"]].head())
+                                df[period_from] = pd.to_datetime(df[period_from], errors='coerce')
+                                df[period_to] = pd.to_datetime(df[period_to], errors='coerce')
+                                df["Tahun Periode Polis"] = (df[period_to] - df[period_from]).dt.days/365
+                                df["Tahun Periode Polis"] = df["Tahun Periode Polis"].round(1)
+                                st.session_state.df = df
+                                st.dataframe(df[[period_from, period_to, "Tahun Periode Polis"]].head())
 
-                                    st.success("`Tahun periode polis` successfully calculated and stored")
-                                    st.session_state.change_history.append(
-                                        "• Field `Tahun Periode Polis` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error calculating tahun {e}")
+                                st.success("`Tahun periode polis` successfully calculated and stored")
+                                st.session_state.change_history.append(
+                                    "• Field `Tahun Periode Polis` created"
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error calculating tahun {e}")
 
                         # DONE
                     if selected_column == "Age (current)":
                         dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
                         if dob:
                             if st.button("Calculate current age"):
-                                try:
+                                #try:
                                     #df_age = df.copy()
-                                    df = st.session_state.df
-                                    df[dob] = pd.to_datetime(df[dob], errors='coerce')
-                                    today = pd.to_datetime("today")
-                                    df["Age (current)"] = (today - df[dob]).dt.days / 365.25
-                                    df["Age (current)"] = df["Age (current)"].round(0)
+                                df = st.session_state.df
+                                df[dob] = pd.to_datetime(df[dob], errors='coerce')
+                                today = pd.to_datetime("today")
+                                df["Age (current)"] = (today - df[dob]).dt.days / 365.25
+                                df["Age (current)"] = df["Age (current)"].round(0)
                                     
-                                    df["Age (current)"].loc[df["Age (current)"] > 99] = 0
-                                    df["Age (current)"].loc[df["Age (current)"] < 17] = 0
+                                df["Age (current)"].loc[df["Age (current)"] > 99] = 0
+                                df["Age (current)"].loc[df["Age (current)"] < 17] = 0
                                     
-                                    st.dataframe(df[[dob, "Age (current)"]].head())
-                                    st.session_state.df = df
-                                    st.success("Age (current) successfully calculated and stored")
-                                    st.session_state.change_history.append(
+                                st.dataframe(df[[dob, "Age (current)"]].head())
+                                st.session_state.df = df
+                                st.success("Age (current) successfully calculated and stored")
+                                st.session_state.change_history.append(
                                     "• Field `Age (current)` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error calculating age (current) {e}")
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error calculating age (current) {e}")
                         # indent 6                            
                     if selected_column == "Age Group (current)":
                         age_group = st.selectbox("Choose field that represents `Age (current)`", options=[""] + list(df.columns))
                         if age_group:
                             if st.button("Group age (current)"):
-                                try:
-                                    df = st.session_state.df
+                                #try:
+                                df = st.session_state.df
                                     #df[age_group] = df[age_group].astype(int)
-                                    df[age_group] = pd.to_numeric(df[age_group], errors='coerce').fillna(0).astype(int)
-                                    df["Age group (current)"] = ""
-                                    df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (current)"] = "18-24"
-                                    df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (current)"] = "25-34"
-                                    df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (current)"] = "35-44"
-                                    df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (current)"] = "45-54"
-                                    df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (current)"] = "55-64"
-                                    df.loc[df[age_group] >= 65, "Age group (current)"] = "65+"
-                                    df.loc[df[age_group] == 0, "Age group (current)"] = "NA"
-                                    st.session_state.df = df
-                                    st.dataframe(df[[age_group, "Age group (current)"]].head())
+                                df[age_group] = pd.to_numeric(df[age_group], errors='coerce').fillna(0).astype(int)
+                                df["Age group (current)"] = ""
+                                df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (current)"] = "18-24"
+                                df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (current)"] = "25-34"
+                                df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (current)"] = "35-44"
+                                df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (current)"] = "45-54"
+                                df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (current)"] = "55-64"
+                                df.loc[df[age_group] >= 65, "Age group (current)"] = "65+"
+                                df.loc[df[age_group] == 0, "Age group (current)"] = "NA"
+                                st.session_state.df = df
+                                st.dataframe(df[[age_group, "Age group (current)"]].head())
                                     
-                                    st.success("Age group (current) successfully grouped and stored")
-                                    st.session_state.change_history.append(
-                                        "• Field `Age Group (current)` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error age grouping {e}")
+                                st.success("Age group (current) successfully grouped and stored")
+                                st.session_state.change_history.append(
+                                    "• Field `Age Group (current)` created"
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error age grouping {e}")
                                             
                     if selected_column == "Age (order)":
                         dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
                         policy = st.selectbox("Choose field that represents `policy order date`/`period from`", options=[""] + list(df.columns))
                         if dob:
                             if st.button("Calculate age based on order"):
-                                try:
-                                    df = st.session_state.df
-                                    df[dob] = pd.to_datetime(df[dob], errors='coerce')
-                                    df[policy] = pd.to_datetime(df[policy], errors='coerce')
+                                #try:
+                                df = st.session_state.df
+                                df[dob] = pd.to_datetime(df[dob], errors='coerce')
+                                df[policy] = pd.to_datetime(df[policy], errors='coerce')
                                             
-                                    df["Age (order)"] = (df[policy] - df[dob]).dt.days / 365.25
-                                    df["Age (order)"] = df["Age (order)"].round(0)
+                                df["Age (order)"] = (df[policy] - df[dob]).dt.days / 365.25
+                                df["Age (order)"] = df["Age (order)"].round(0)
                                     
-                                    df["Age (order)"].loc[df["Age (order)"] > 99] = 0
-                                    df["Age (order)"].loc[df["Age (order)"] < 17] = 0
+                                df["Age (order)"].loc[df["Age (order)"] > 99] = 0
+                                df["Age (order)"].loc[df["Age (order)"] < 17] = 0
                                     
-                                    st.dataframe(df[[dob, policy, "Age (order)"]].head())
-                                    st.session_state.df = df
-                                    st.success("Age (order) successfully calculated and stored")
-                                    st.session_state.change_history.append(
-                                    "• Field `Age (order)` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error calculating age (order) {e}")
+                                st.dataframe(df[[dob, policy, "Age (order)"]].head())
+                                st.session_state.df = df
+                                st.success("Age (order) successfully calculated and stored")
+                                st.session_state.change_history.append(
+                                "• Field `Age (order)` created"
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error calculating age (order) {e}")
                                             
                     if selected_column == "Age Group (order)":
                         age_group = st.selectbox("Choose field that represents `Age (order)`", options=[""] + list(df.columns))
                         if age_group:
                             if st.button("Group age (order)"):
-                                try:
-                                    df = st.session_state.df
+                                #try:
+                                df = st.session_state.df
                                     #df = df.copy()
-                                    df[age_group] = df[age_group].astype(int)
-                                    df["Age group (order)"] = ""
-                                    df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (order)"] = "18-24"
-                                    df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (order)"] = "25-34"
-                                    df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (order)"] = "35-44"
-                                    df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (order)"] = "45-54"
-                                    df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (order)"] = "55-64"
-                                    df.loc[df[age_group] >= 65, "Age group (order)"] = "65+"
-                                    df.loc[df[age_group] == 0, "Age group (order)"] = "NA"
-                                    st.dataframe(df[[age_group, "Age group (order)"]].head())
-                                    st.session_state.df = df
-                                    st.success("Age group (order) successfully calculated and stored")
-                                    st.session_state.change_history.append(
-                                    "• Field `Age Group (order)` created"
-                                    )
-                                except Exception as e:
-                                    st.error(f"Error calculating age {e}")
+                                df[age_group] = df[age_group].astype(int)
+                                df["Age group (order)"] = ""
+                                df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (order)"] = "18-24"
+                                df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (order)"] = "25-34"
+                                df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (order)"] = "35-44"
+                                df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (order)"] = "45-54"
+                                df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (order)"] = "55-64"
+                                df.loc[df[age_group] >= 65, "Age group (order)"] = "65+"
+                                df.loc[df[age_group] == 0, "Age group (order)"] = "NA"
+                                st.dataframe(df[[age_group, "Age group (order)"]].head())
+                                st.session_state.df = df
+                                st.success("Age group (order) successfully calculated and stored")
+                                st.session_state.change_history.append(
+                                "• Field `Age Group (order)` created"
+                                )
+                                #except Exception as e:
+                                    #st.error(f"Error calculating age {e}")
                         # indent 6
                     if selected_column == "Post Code":
                         post_code = st.selectbox("Choose field that represents address", options=[""] + list(df.columns))
@@ -802,7 +802,7 @@ if url:
                                 def validate_prem(premi):
                                     if pd.isna(premi):
                                         return 1
-                                    premi = pd.to_numeric(premi, errors='coerce').fillna(0).astype(int)
+                                    premi = pd.to_numeric(premi, errors='coerce').astype(int)
                                     #premi = int(premi)
                                     return premi
                                     
@@ -810,7 +810,7 @@ if url:
                                     if pd.isna(period):
                                         return 0
                                     #period = int(period)
-                                    period = pd.to_numeric(period, errors='coerce').fillna(0).astype(int)
+                                    period = pd.to_numeric(period, errors='coerce').astype(int)
                                     return period
                                     
                                 premi = df[gross_prem].apply(lambda x: validate_prem(x))
@@ -942,7 +942,7 @@ if url:
                                     
                         df = st.session_state.df
                         drop_col = []
-                        drop_col = st.multiselect("Choose column(s) to drop", options=[""]+list(df.columns))
+                        drop_col = st.multiselect("Choose column(s) to drop (max. 3 for each loop)", options=[""]+list(df.columns))
                         if st.button("Drop"):
                             df_drop = None
                             df_drop = df.drop(drop_col, axis=1)
@@ -968,16 +968,20 @@ if url:
                             for col in df.select_dtypes(include="object").columns:
                                 df[col] = df[col].astype(str)
                                 
+                            #def csv_bytes(df):
+                                #csv = StringIO()
+                                #df.to_csv(csv, index=False)
+                                #return csv.getvalue().encode("utf-8")
+                            
+                            @st.cache_data
                             def csv_bytes(df):
-                                csv = StringIO()
-                                df.to_csv(csv, index=False)
-                                return csv.getvalue().encode("utf-8")
-                            try:
-                                if st.download_button("📥 Download as CSV", data = csv_bytes(df), file_name="transformed.csv", mime="text/csv"):
-                                    df = []
-                                    st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
-                            except Exception as e:
-                                st.error(f"❌ Error saving file: {e}")
+                                return df.to_csv(index=False).encode("utf-8")
+
+                            csv_data = csv_bytes(st.session_state.df)
+                            if st.download_button("📥 Download as CSV", data = csv_data), file_name="transformed_data.csv", mime="text/csv"):
+                                st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
+                            # st.error(f"❌ Error saving file: {e}")
+                
                         #try:
                             #output = BytesIO()
                             #with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
