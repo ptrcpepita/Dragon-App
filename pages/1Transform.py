@@ -14,7 +14,7 @@ st.markdown(
         """
         <style>
             [data-testid = "stSidebarNav"]{
-            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/dragon_logo_png.png");
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/74d7b0924a521afba224fca618d9e0771ea525e2/asset/dragon_logo_png.png");
             background-repeat: no-repeat;
             background-size: 210px;
             padding-top: 100px;
@@ -801,14 +801,16 @@ if url:
                                 #df = df.copy()
                                 def validate_prem(premi):
                                     if pd.isna(premi):
-                                        return "Invalid: empty gross premi"
-                                    premi = int(premi)
+                                        return 1
+                                    premi = pd.to_numeric(premi, errors='coerce').fillna(0).astype(int)
+                                    #premi = int(premi)
                                     return premi
                                     
                                 def validate_period(period):
                                     if pd.isna(period):
-                                        return "Invalid: empty policy period in year"
-                                    period = int(period)
+                                        return 0
+                                    #period = int(period)
+                                    period = pd.to_numeric(period, errors='coerce').fillna(0).astype(int)
                                     return period
                                     
                                 premi = df[gross_prem].apply(lambda x: validate_prem(x))
@@ -830,9 +832,10 @@ if url:
                                 #df = df.copy()
                                 df = st.session_state.df
                                 def grouping_premi(premi):
-                                    premi = pd.to_numeric(premi, errors="coerce")
+                                    #premi = pd.to_numeric(premi, errors="coerce")
+                                    premi = pd.to_numeric(premi, errors='coerce').fillna(0).astype(int)
                                     if pd.isna(premi):
-                                        return "Invalid: empty gross premi/year"
+                                        return 'Invalid: empty gross premi/year'
                                     elif premi < 1000000:
                                         return '< 1 jt'
                                     elif 1000000 <= premi < 5000000:
@@ -920,11 +923,11 @@ if url:
                     st.write("**Last 5 Rows:**")
                     st.dataframe(df.tail())
             
-                    info_df = pd.DataFrame({"Column": df.columns,
-                        "Null Count":df.isna().sum().values,
-                        "Dtype": df.dtypes.values})
-                    st.write("**Column Names and Data Types:**")
-                    st.dataframe(info_df)
+                    #info_df = pd.DataFrame({"Column": df.columns,
+                        #"Null Count":df.isna().sum().values,
+                        #"Dtype": df.dtypes.values})
+                    #st.write("**Column Names and Data Types:**")
+                    #st.dataframe(info_df)
 
                     # DROP FIELDS
                     # indent: 5 (Drop Field)
@@ -971,6 +974,7 @@ if url:
                                 return csv.getvalue().encode("utf-8")
                             try:
                                 if st.download_button("📥 Download as CSV", data = csv_bytes(df), file_name="transformed.csv", mime="text/csv"):
+                                    df = []
                                     st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
                             except Exception as e:
                                 st.error(f"❌ Error saving file: {e}")
