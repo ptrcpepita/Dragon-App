@@ -166,7 +166,7 @@ if url:
                     st.session_state.change_history = []
 
                 transform_opt = ['KTP/ID Validation', 'Phone Number Validation', 'Tahun Periode Polis',
-                                    'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kecamatan', 'Kota/Kab.', 'Provinsi',
+                                    'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kota/Kab.', 'Provinsi',
                                     'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Grouping Claim Ratio','Grouping Claim Frequency','Last Segmen']
             
                 selected_column = st.selectbox("Transformation Options", options=[""] + transform_opt)
@@ -294,7 +294,7 @@ if url:
                                         return "NA", 'Invalid: repeated digits'
                                     if phone == "NAN":
                                         return "NA", "Invalid: empty"
-                                    if not 10 <= len(phone) <= 13:
+                                    if not 10 <= len(phone) <= 14:
                                         return "NA", "Invalid: Length"
 
                                     return phone, "Valid"
@@ -919,13 +919,16 @@ if url:
                     if st.session_state['savedata_clicked']:
                         st.markdown("----")
                         st.subheader('📥 8. Save Transformed Data')
+                        for col in df.select_dtypes(include="object").columns:
+                            df[col] = df[col].astype(str)
+                                
                         def csv_bytes(df):
                             csv = StringIO()
                             df.to_csv(csv, index=False)
                             return csv.getvalue().encode("utf-8")
                         try:
                             if st.download_button(
-                            "📥 Download CSV", data = csv_bytes(df), file_name="transformed.csv",
+                            "📥 Download as CSV", data = csv_bytes(df), file_name="transformed.csv",
                             mime="text/csv"):
                                 st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
                         except Exception as e:
