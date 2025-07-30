@@ -937,8 +937,8 @@ if url:
                                 #processed_data = output.getvalue()
                 
                             #if st.download_button(label="Download as Excel", data=processed_data,
-                                                file_name="transformed_dataframe.xlsx",
-                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+                                                #file_name="transformed_dataframe.xlsx",
+                                                #mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
                                 #st.success("Dataset successfully saved.")
                                 #st.markdown("## Thankyou for using Dragon ^^")
                         #except Exception as e:
