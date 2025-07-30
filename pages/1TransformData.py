@@ -172,21 +172,6 @@ if url:
                 if selected_column:
 
                     if selected_column == "Grouping Claim Ratio":
-                        st.markdown("""
-                        `Grouping Claim Ratio` needs `Claim Ratio` columns and will group it based on this range:
-                            - 0
-                            - 0-5
-                            - 5-10
-                            - 10-30
-                            - 30-50
-                            - 50-70
-                            - 70-90
-                            - 90-110
-                            - 110-130
-                            - 130-150
-                            - 150+
-                        """)
-
                         claim_ratio = st.selectbox("Choose field that represents `Claim Ratio`", options=[""] + list(df.columns))
                         if claim_ratio:
                             if st.button("Group claim ratio"):
@@ -214,22 +199,12 @@ if url:
                                     )
                                 except Exception as e:
                                     st.error(f"Error calculating age {e}")
-                            
-                                                                                                                
+                                                                                                                 
                         # LAST SEGMENT ON PROGRESS (indent=6)
                     if selected_column == "Last Segmen":
-                        st.markdown("""
-                        `Last Segmen` needs `Customer Name`, `Birth date`, `Period To`, and `Segmen` columns and will do this validation:
-                        """)
+                        st.markdown("on process")
                             
                     if selected_column == "KTP/ID Validation":
-                        st.markdown("""
-                        `KTP/ID Validation` needs `KTP/ID` and `BirthDate/DoB` column and will do this validation:
-                            - Length validation (16 digits)
-                            - Read gender from the 7th and 8th digit (if > 40 = female)
-                            - Read birthdate from the 7th until 12th digit
-                            - Match the extracted birthdate and birthdate from the data
-                        """)
                         ktp = st.selectbox("Choose field that represents `KTP`", options=[""] + list(df.columns))
                         dob_data = st.selectbox("Choose field that represents `DoB`", options=[""] + list(df.columns))
                         gender_data = st.selectbox("Choose field that represents `gender`", options=[""] + list(df.columns))
@@ -296,12 +271,6 @@ if url:
                                 
                         # indent 6
                     if selected_column == "Phone Number Validation":
-                        st.markdown("""
-                            `Phone Number Validation` needs `Phone Number` column and will do this validation:
-                            - Change all prefix into '08xxx'
-                            - Fill '0' to more than 5 digits serial number (e.g. 000000xxx)
-                             - Length validation between 10-13 digits
-                        """)
                         phone_col = st.selectbox("Choose field that represents `phone number`", options=[""] + list(df.columns))
                         if phone_col:
                             if st.button("Validate phone number"):
@@ -340,10 +309,6 @@ if url:
                         
                         # DONE
                     if selected_column == "Tahun Periode Polis":
-                        st.markdown("""
-                            `Tahun Periode Polis` needs `Period From` and `Period To` column and will do this calculation:
-                            - (Period To - Period From)/365 
-                        """)
                         period_from = st.selectbox("Choose field that represents `period from`", options=[""] + list(df.columns))
                         period_to = st.selectbox("Choose field that represents `period to`", options=[""] + list(df.columns))
                         if period_from and period_to:
@@ -366,10 +331,6 @@ if url:
 
                         # DONE
                     if selected_column == "Age (current)":
-                        st.markdown("""
-                            `Age (current)` needs `Birth Date` column and will do this calculation:
-                            - Date today-Birth date
-                        """)
                         dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
                         if dob:
                             if st.button("Calculate current age"):
@@ -393,15 +354,6 @@ if url:
                                     st.error(f"Error calculating age (current) {e}")
                         # indent 6                            
                     if selected_column == "Age Group (current)":
-                        st.markdown("""
-                        `Age Group (current)` needs `Age (current)` column and will gorup it based on this range:
-                            - 18-24
-                            - 25-34
-                            - 35-44
-                            - 45-54
-                            - 55-64
-                            - 65+
-                        """)
                         age_group = st.selectbox("Choose field that represents `Age (current)`", options=[""] + list(df.columns))
                         if age_group:
                             if st.button("Group age (current)"):
@@ -426,10 +378,6 @@ if url:
                                     st.error(f"Error calculating age {e}")
                                             
                     if selected_column == "Age (order)":
-                        st.markdown("""
-                            `Age (order)` needs `Birth Date` and `Policy Order Date`/`Period From` column and will do this calculation:
-                            - Policy order date - birth date
-                        """)
                         dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
                         policy = st.selectbox("Choose field that represents `policy order date`/`period from`", options=[""] + list(df.columns))
                         if dob:
@@ -455,15 +403,6 @@ if url:
                                     st.error(f"Error calculating age (order) {e}")
                                             
                     if selected_column == "Age Group (order)":
-                        st.markdown("""
-                            `Age Group (order)` needs `Age (order)` column and will gorup it based on this range:
-                            - 18-24
-                            - 25-34
-                            - 35-44
-                            - 45-54
-                            - 55-64
-                            - 65+
-                        """)
                         age_group = st.selectbox("Choose field that represents `Age (order)`", options=[""] + list(df.columns))
                         if age_group:
                             if st.button("Group age (order)"):
@@ -488,9 +427,6 @@ if url:
                                     st.error(f"Error calculating age {e}")
                         # indent 6
                     if selected_column == "Post Code":
-                        st.markdown("""
-                            `Post Code` needs `Address` column and will detect the valid 5 digit number (ignore repeated patterns like 00000).
-                        """)
                         post_code = st.selectbox("Choose field that represents address", options=[""] + list(df.columns))
                         if post_code:
                             if st.button("Extract post code"):
@@ -514,9 +450,6 @@ if url:
                                     
                         # indent 6
                     if selected_column == "Kota/Kab.":
-                        st.markdown("""
-                            `Kota/Kab.` needs `Post Code` column and will do the mapping.
-                        """)
                         kota = st.selectbox("Choose field that represents post code", options=[""] + list(df.columns))
                         if kota:
                             if st.button("City mapping"):
@@ -767,9 +700,6 @@ if url:
                                 )
                         # indent 6
                     if selected_column == "Provinsi":
-                        st.markdown("""
-                        `Provinsi` needs `Post Code` column and will do the mapping.
-                        """)
                         prov = st.selectbox("Choose field that represents `post code`", options=[""] + list(df.columns))
                         if prov:
                             if st.button("Provinsi mapping"):
@@ -826,9 +756,6 @@ if url:
                                                             
                         # indent 6
                     if selected_column == "Chassis Number":
-                        st.markdown("""
-                            `Chassis Number` needs `Chassis Number` column and will do the validation.
-                        """)
                         chas = st.selectbox("Choose field that represents chassis number", options=[""] + list(df.columns))
                         if chas:
                             if st.button("Chassis validation"):
@@ -852,9 +779,6 @@ if url:
                                 )
                         # indent 6 
                     if selected_column == "Gross Premi/Year":
-                        st.markdown("""
-                            `Gross Premi/Year` needs `Tahun Periode Polis` and `Gross Premi` column and will calculate Gross Premi based on policy period year.
-                        """)
                         periode_polis = st.selectbox("Choose field that represents `tahun periode polis`", options=[""]+list(df.columns))
                         gross_prem = st.selectbox("Choose field that represents `gross premi`", options=[""]+list(df.columns))
                         if gross_prem:
@@ -885,17 +809,6 @@ if url:
                         
                         # indent 6
                     if selected_column == 'Grouping Gross Premi/Year':
-                        st.markdown("""
-                        `Grouping Gross Premi/Year` needs `Gross Premi/Year` column and will group it based on this segmentation:
-                                - < 1jt
-                                - 1-5jt
-                                - 5-10jt
-                                - 10-15jt
-                                - 15-20jt
-                                - 20-25jt
-                                - 25-30jt
-                                - 30jt+
-                        """)
                         group_premi = st.selectbox("Choose field that represents `Gross Premi/Year`", options=[""]+list(df.columns))
                         if group_premi:
                             if st.button("Group gross premi/year"):
@@ -930,16 +843,6 @@ if url:
                                 )
                                             
                     if selected_column == 'Grouping Sum Insured':
-                        st.markdown("""
-                            `Grouping Sum Insured` needs `Sum Insured` column and will group it based on this segmentation:
-                            - < 100jt
-                            - 100-125jt
-                            - 125-200jt
-                            - 200-400jt
-                            - 400-800jt
-                            - 800jt-1.5m
-                            - 1.5m+
-                        """)
                         group_tsi = st.selectbox("Choose field that represents `Sum Insured`", options=[""]+list(df.columns))
                         if group_tsi:
                             if st.button("Group sum insured"):
@@ -998,8 +901,6 @@ if url:
                     st.dataframe(df.head())
                     st.write("**Last 5 Rows:**")
                     st.dataframe(df.tail())
-                    # st.write("**All Data Row:**")
-                    # st.dataframe(df)
             
                     info_df = pd.DataFrame({"Column": df.columns,
                         "Non-Null Count": df.notnull().sum().values,
@@ -1027,8 +928,10 @@ if url:
                                                 file_name="transformed_dataframe.xlsx",
                                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
                                 st.success("Dataset successfully saved.")
+                                st.markdown("## Thankyou for using Dragon ^^")
                         except Exception as e:
                             st.error(f"❌ Error saving file: {e}")
+                        
                                
                 st.write("")
                 st.write("")
