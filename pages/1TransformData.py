@@ -28,16 +28,16 @@ output = BytesIO()
 # BUTTON for flow 1-5
 if "explore_clicked" not in st.session_state:
     st.session_state['explore_clicked'] = False
-if "clean_clicked" not in st.session_state:
-    st.session_state['clean_clicked'] = False
+#if "clean_clicked" not in st.session_state:
+    #st.session_state['clean_clicked'] = False
 if "transform_clicked" not in st.session_state:
     st.session_state['transform_clicked'] = False
-if "removedupli_clicked" not in st.session_state:
-    st.session_state['removedupli_clicked'] = False
+#if "removedupli_clicked" not in st.session_state:
+    #st.session_state['removedupli_clicked'] = False
 if "previewclean2_clicked" not in st.session_state:
     st.session_state['previewclean2_clicked'] = False
-if "dropcol_clicked" not in st.session_state:
-    st.session_state['dropcol_clicked'] = False
+#if "dropcol_clicked" not in st.session_state:
+    #st.session_state['dropcol_clicked'] = False
 if 'savedata_clicked' not in st.session_state:
     st.session_state['savedata_clicked'] = False
 
@@ -47,9 +47,9 @@ st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow
 
 # 1. UPLOAD DATA
 st.markdown("---")
-st.subheader("📂 1. Paste an Excel File Link")
+st.subheader("📂 1. Insert an Excel File Link")
 
-url = st.text_input("Paste the public Excel file URL here (format = one drive link + '&download=1'):")
+url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
 
 #if url:
    # try:
@@ -113,10 +113,10 @@ if url:
             st.markdown("---")
             st.subheader('📈 2. Preview Data')
             st.write("**Data shape:**", df_original.shape)
-            st.write("**First 10 Rows:**")
-            st.dataframe(df_original.head(10))
-            st.write("**Last 10 Rows:**")
-            st.dataframe(df_original.tail(10))
+            st.write("**First 5 Rows:**")
+            st.dataframe(df_original.head())
+            st.write("**Last 5 Rows:**")
+            st.dataframe(df_original.tail())
 
             info_df = pd.DataFrame({"Column": df_original.columns,
                                     "Non-Null Count": df_original.notnull().sum().values,
@@ -206,7 +206,7 @@ if url:
                                         
                                     df_claim_ratio.loc[df_claim_ratio[claim_ratio] > 150, "Claim Ratio (group)"] = "150+"
                                     df_claim_ratio.loc[df_claim_ratio[claim_ratio] == 0, "Claim Ratio (group)"] = "0"
-                                    st.dataframe(df_claim_ratio[[claim_ratio, "Claim Ratio (group)"]])
+                                    st.dataframe(df_claim_ratio[[claim_ratio, "Claim Ratio (group)"]].head())
                                     st.session_state.df = df_claim_ratio
                                     st.success("Claim ratio successfully grouped and stored")
                                     st.session_state.change_history.append(
@@ -289,7 +289,7 @@ if url:
 
                                 st.success("KTP validation complete")
                             
-                                st.dataframe(df_ktp[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]])
+                                st.dataframe(df_ktp[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `KTP Validation` created"
                                 )       
@@ -333,7 +333,7 @@ if url:
                                 df_validated[f"{phone_col}_status"] = df_validated[phone_col].apply(lambda x:validate_phone(x)[1])
                                 st.session_state.df = df_validated
                                 st.success("Phone number validation complete")
-                                st.dataframe(df_validated[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]])
+                                st.dataframe(df_validated[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Phone Number Validation` created"
                                 )
@@ -354,7 +354,7 @@ if url:
                                     df_calc[period_to] = pd.to_datetime(df_calc[period_to], errors='coerce')
                                     df_calc["Tahun periode polis"] = (df_calc[period_to] - df_calc[period_from]).dt.days/365
                                     df_calc["Tahun periode polis"] = df_calc["Tahun periode polis"].round(1)
-                                    st.dataframe(df_calc[[period_from, period_to, "Tahun periode polis"]])
+                                    st.dataframe(df_calc[[period_from, period_to, "Tahun periode polis"]].head())
 
                                     st.session_state.df = df_calc
                                     st.success("`Tahun periode polis` successfully calculated and stored")
@@ -383,7 +383,7 @@ if url:
                                     df_age["Age (current)"].loc[df_age["Age (current)"] > 99] = 0
                                     df_age["Age (current)"].loc[df_age["Age (current)"] < 17] = 0
                                     
-                                    st.dataframe(df_age[[dob, "Age (current)"]])
+                                    st.dataframe(df_age[[dob, "Age (current)"]].head())
                                     st.session_state.df = df_age
                                     st.success("Age (current) successfully calculated and stored")
                                     st.session_state.change_history.append(
@@ -416,7 +416,7 @@ if url:
                                     df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (current)"] = "55-64"
                                     df_age_group.loc[df_age_group[age_group] >= 65, "Age group (current)"] = "65+"
                                     df_age_group.loc[df_age_group[age_group] == 0, "Age group (current)"] = "NA"
-                                    st.dataframe(df_age_group[[age_group, "Age group (current)"]])
+                                    st.dataframe(df_age_group[[age_group, "Age group (current)"]].head())
                                     st.session_state.df = df_age_group
                                     st.success("Age group (current) successfully calculated and stored")
                                     st.session_state.change_history.append(
@@ -445,7 +445,7 @@ if url:
                                     df_age["Age (order)"].loc[df_age["Age (order)"] > 99] = 0
                                     df_age["Age (order)"].loc[df_age["Age (order)"] < 17] = 0
                                     
-                                    st.dataframe(df_age[[dob, policy, "Age (order)"]])
+                                    st.dataframe(df_age[[dob, policy, "Age (order)"]].head())
                                     st.session_state.df = df_age
                                     st.success("Age (order) successfully calculated and stored")
                                     st.session_state.change_history.append(
@@ -478,7 +478,7 @@ if url:
                                     df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (order)"] = "55-64"
                                     df_age_group.loc[df_age_group[age_group] >= 65, "Age group (order)"] = "65+"
                                     df_age_group.loc[df_age_group[age_group] == 0, "Age group (order)"] = "NA"
-                                    st.dataframe(df_age_group[[age_group, "Age group (order)"]])
+                                    st.dataframe(df_age_group[[age_group, "Age group (order)"]].head())
                                     st.session_state.df = df_age_group
                                     st.success("Age group (order) successfully calculated and stored")
                                     st.session_state.change_history.append(
@@ -505,7 +505,7 @@ if url:
                                             return code
                                     return ""
                                 df_post["Post Code"] = df_post[post_code].apply(extract_postcode)
-                                st.dataframe(df_post[[post_code, "Post Code"]])
+                                st.dataframe(df_post[[post_code, "Post Code"]].head())
                                 st.session_state.df = df_post
                                 st.success("Post code extracted successfully")
                                 st.session_state.change_history.append(
@@ -759,7 +759,7 @@ if url:
                                     return "Unknown"
                                             
                                 df_kota['Kota/Kab.'] = df_kota[kota].apply(map_postal_code)
-                                st.dataframe(df_kota[[kota, "Kota/Kab."]])
+                                st.dataframe(df_kota[[kota, "Kota/Kab."]].head())
                                 st.session_state.df = df_kota
                                 st.success("Kota mapped successfully")
                                 st.session_state.change_history.append(
@@ -817,7 +817,7 @@ if url:
                                     return "Unknown"
                                         
                                 df_prov['Provinsi'] = df_prov[prov].apply(map_postal_code)
-                                st.dataframe(df_prov[[prov, "Provinsi"]])
+                                st.dataframe(df_prov[[prov, "Provinsi"]].head())
                                 st.session_state.df = df_prov
                                 st.success("Province mapped successfully")
                                 st.session_state.change_history.append(
@@ -846,7 +846,7 @@ if url:
                                 df_chassis[f"{chas}_val"] = df_chassis[chas].apply(lambda x: validate_chassis(x))
                                 st.session_state.df = df_chassis
                                 st.success("Chassis number validation complete")
-                                st.dataframe(df_chassis[[chas,f"{chas}_val"]])
+                                st.dataframe(df_chassis[[chas,f"{chas}_val"]].head())
                                 st.session_state.change_history.append(
                                         "• Field `Chassis Validation` created"
                                 )
@@ -878,7 +878,7 @@ if url:
                                 df_prem["Gross Premi/Year"] = premi/period
                                 st.session_state.df = df_prem
                                 st.success("Gross premi/year successfully calculated")
-                                st.dataframe(df_prem[[periode_polis,gross_prem,"Gross Premi/Year"]].head(20))
+                                st.dataframe(df_prem[[periode_polis,gross_prem,"Gross Premi/Year"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Gross Premi/Year` created"
                                 )
@@ -924,7 +924,7 @@ if url:
                                 
                                 st.session_state.df = df_group_prem
                                 st.success("Grouping gross premi/year successfully created")
-                                st.dataframe(df_group_prem[[group_premi,"Grouping Gross Premi/Year"]])
+                                st.dataframe(df_group_prem[[group_premi,"Grouping Gross Premi/Year"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Grouping Gross Premi/Year` created"
                                 )
@@ -965,7 +965,7 @@ if url:
                                 
                                 st.session_state.df = df_group_tsi
                                 st.success("Grouping sum insured successfully created")
-                                st.dataframe(df_group_tsi[[group_tsi,"Grouping Sum Insured"]])
+                                st.dataframe(df_group_tsi[[group_tsi,"Grouping Sum Insured"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Grouping Sum Insured` created"
                                 )
@@ -998,8 +998,8 @@ if url:
                     st.dataframe(df.head())
                     st.write("**Last 5 Rows:**")
                     st.dataframe(df.tail())
-                    st.write("**All Data Row:**")
-                    st.dataframe(df)
+                    # st.write("**All Data Row:**")
+                    # st.dataframe(df)
             
                     info_df = pd.DataFrame({"Column": df.columns,
                         "Non-Null Count": df.notnull().sum().values,
@@ -1008,128 +1008,27 @@ if url:
                     st.write("**Column Names and Data Types:**")
                     st.dataframe(info_df)
 
-                        # 6. REMOVE DUPLICATE
-                        # indent: 6
-                    st.markdown("")
-                    if st.button('Remove Duplicate ⏭️', key='dupli'):
-                        st.session_state['removedupli_clicked'] = True
-
-                    if st.session_state['removedupli_clicked']:
-                        st.markdown("---")
-                        st.subheader('📑 6. Remove Duplicate')
-                        st.write("Data shape: ", {len(df)})
-                        input_dupli = st.number_input("How many base column to remove duplicate?", min_value=0, max_value =len(df.columns), step=1, format='%d', key='num_dupli')
-                        st.write("min: 1, max:", len(df.columns))
-
-                        if input_dupli == 0:
-                            st.info("No duplicate will be removed.")
-                        else:
-                            if st.button("Ok", key='ok'):
-                                st.session_state['dupli_config'] = True
-
-                            if st.session_state.get('dupli_config', False):
-                                selected_cols = []
-                                for i in range(st.session_state['num_dupli']):
-                                    col = st.selectbox(f"Choose column {i+1}", options=[""] + list(df.columns), key=f"dupli_col_{i}")
-                                    st.dataframe(df[col].value_counts())
-                                    st.write("Total of unique value: ",df[col].nunique())
-                                    if col:
-                                        selected_cols.append(col)
-                            
-                                dupli_row = df[df.duplicated(subset=selected_cols, keep=False)]
-                                dupli_row = dupli_row.sort_values(by=selected_cols)
-                                st.write("Duplicated data rows:")
-                                st.dataframe(dupli_row)
-        
-                                if selected_cols:
-                                    keep_option = st.radio("Which duplicate data should be DROP?", options=["First", "Last", "All", "Choose index"], index=0, horizontal=True)
-                                    st.markdown("""
-                                        Note:
-                                        - First: drop the first, keep the last occurrence
-                                        - Last: drop keep last, keep the first occurrence
-                                        - All: drop all duplicate
-                                        - Choose index: choose index you want to DROP
-                                    """)
-                                
-                                    choose_index = False
-                                    if keep_option == "Choose index":
-                                        choose_index = True
-                                        index = st.text_input("Enter index number you want to **DROP** (separated by commas): ", placeholder='eg. 9, 15, 180')
-                                        if index:
-                                            try:
-                                                number = [int(x.strip()) for x in index.split(',') if x.strip().isdigit()]
-                                                st.write(f"Index number entered: {number}")
-                                            except Exception as e:
-                                                st.error(f"Invalid input: {e}")
+                    # 8. SAVE DATA
+                                # indent: 8 -> 5
+                    if st.button('Save Transformed Data ⏭️', key='save_trans_data'):
+                        st.session_state['savedata_clicked'] = True
                     
-                                if st.button("Remove", key='remove dupli'):
-                                    df_cleaned = None
-                                    if keep_option == "Last":
-                                        df_cleaned = df.drop_duplicates(subset=selected_cols, keep='first').reset_index(drop=True)
-                                    elif keep_option == "First":
-                                        df_cleaned = df.drop_duplicates(subset=selected_cols, keep='last').reset_index(drop=True)
-                                    elif keep_option == "All":
-                                        dup_mask = df.duplicated(subset=selected_cols, keep=False)
-                                        df_cleaned = df[~dup_mask].reset_index(drop=True)
-                                    elif choose_index == True:
-                                        df_cleaned = df.drop(number).reset_index(drop=True)
-                                        choose_index = False
-                        
-                                    st.success(f"Successfully remove duplicate based on {', '.join(selected_cols)} using '{keep_option}'")
-                                    st.write("New data:")
-                                    st.dataframe(df_cleaned)
-                                    st.write("New data shape: ",len(df_cleaned))
-                                    st.session_state.df = df_cleaned
-
-                            # INDENT: 7
-                            # DROP COLUMNS
-                        st.markdown("")
-                        if st.button('Drop Column ⏭️', key='drop_col'):
-                            st.session_state['dropcol_clicked'] = True
-                        if st.session_state['dropcol_clicked']:
-                            st.markdown("----")
-                            st.subheader("🗑️ 8. Drop Column")
-                            if "change_history2" not in st.session_state:
-                                st.session_state.change_history2 = []
-                                    
-                            df = st.session_state.df
-                            drop_col = []
-                            drop_col = st.multiselect("Choose column(s) to drop", options=[""]+list(df.columns))
-                            if st.button("Drop"):
-                                df_drop = None
-                                df_drop = df.drop(drop_col, axis=1)
-                                st.success(f"Successfully drop {drop_col} column")
-                                st.write("Available columns: ", df_drop.columns)
-                                st.session_state.df = df_drop
-                                st.session_state.change_history2.append(drop_col)
-                                    
-                            if st.session_state.change_history2:
-                                for entry in st.session_state.change_history2:
-                                    st.info(f"Dropped Columns: {entry}")
-                            else:
-                                st.markdown("*None*")
-                            
-                                # 8. SAVE DATA
-                                # indent: 8
-                            if st.button('Save Transformed Data ⏭️', key='save_trans_data'):
-                                st.session_state['savedata_clicked'] = True
-                    
-                            if st.session_state['savedata_clicked']:
-                                st.markdown("----")
-                                st.subheader('📥 8. Save Transformed Data')
-                                try:
-                                    output = BytesIO()
-                                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                                        df.to_excel(writer, index=False, sheet_name='Sheet1')
-                                        writer.close()
-                                        processed_data = output.getvalue()
+                    if st.session_state['savedata_clicked']:
+                        st.markdown("----")
+                        st.subheader('📥 8. Save Transformed Data')
+                        try:
+                            output = BytesIO()
+                            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                                df.to_excel(writer, index=False, sheet_name='Sheet1')
+                                writer.close()
+                                processed_data = output.getvalue()
                 
-                                    if st.download_button(label="Download as Excel", data=processed_data,
+                            if st.download_button(label="Download as Excel", data=processed_data,
                                                 file_name="transformed_dataframe.xlsx",
                                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-                                        st.success("Dataset successfully saved.")
-                                except Exception as e:
-                                    st.error(f"❌ Error saving file: {e}")
+                                st.success("Dataset successfully saved.")
+                        except Exception as e:
+                            st.error(f"❌ Error saving file: {e}")
                                
                 st.write("")
                 st.write("")
@@ -1143,4 +1042,4 @@ if url:
     except Exception as e:
         st.error(f"❌ Error loading file: {e}")
 else:
-    st.info("Please copy paste an Excel link file to get started.")
+    st.info("Please paste a public link excel file to get started.")
