@@ -873,7 +873,8 @@ if url:
                                     "• Field `Grouping Sum Insured` created"
                                 )
                                                     
-                    # indent: 5     
+                    # indent: 5    
+                st.write("")
                 st.markdown("**History Changes:**")
                 if st.session_state.change_history:
                     for entry in st.session_state.change_history:
@@ -917,21 +918,31 @@ if url:
                     if st.session_state['savedata_clicked']:
                         st.markdown("----")
                         st.subheader('📥 8. Save Transformed Data')
+                        def csv_bytes(df):
+                            csv = StringIO()
+                            df.to_csv(csv, index=False)
+                            return csv.getvalue().encode("utf-8")
                         try:
-                            output = BytesIO()
-                            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                                df.to_excel(writer, index=False, sheet_name='Sheet1')
-                                writer.close()
-                                processed_data = output.getvalue()
-                
-                            if st.download_button(label="Download as Excel", data=processed_data,
-                                                file_name="transformed_dataframe.xlsx",
-                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-                                st.success("Dataset successfully saved.")
-                                st.markdown("## Thankyou for using Dragon ^^")
+                            if st.download_button(
+                            "📥 Download CSV", data = csv_bytes(df), file_name="transformed.csv",
+                            mime="text/csv"):
+                                st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
                         except Exception as e:
                             st.error(f"❌ Error saving file: {e}")
-                        
+                        #try:
+                            #output = BytesIO()
+                            #with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                                #df.to_excel(writer, index=False, sheet_name='Sheet1')
+                                #writer.close()
+                                #processed_data = output.getvalue()
+                
+                            #if st.download_button(label="Download as Excel", data=processed_data,
+                                                file_name="transformed_dataframe.xlsx",
+                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+                                #st.success("Dataset successfully saved.")
+                                #st.markdown("## Thankyou for using Dragon ^^")
+                        #except Exception as e:
+                            #st.error(f"❌ Error saving file: {e}")
                                
                 st.write("")
                 st.write("")
