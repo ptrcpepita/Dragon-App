@@ -37,8 +37,8 @@ if "transform_clicked" not in st.session_state:
     #st.session_state['removedupli_clicked'] = False
 if "previewclean2_clicked" not in st.session_state:
     st.session_state['previewclean2_clicked'] = False
-#if "dropcol_clicked" not in st.session_state:
-    #st.session_state['dropcol_clicked'] = False
+if "dropcol_clicked" not in st.session_state:
+    st.session_state['dropcol_clicked'] = False
 if 'savedata_clicked' not in st.session_state:
     st.session_state['savedata_clicked'] = False
 
@@ -121,7 +121,6 @@ if url:
             st.dataframe(df_original.tail())
 
             info_df = pd.DataFrame({"Column": df_original.columns,
-                                    "Non-Null Count": df_original.notnull().sum().values,
                                     "Null Count":df_original.isna().sum().values,
                                     "Dtype": df_original.dtypes.values})
 
@@ -889,7 +888,7 @@ if url:
                     #st.session_state.custom_dtypes = {col: str(st.session_state.df[col].dtype) for col in st.session_state.df.columns}
                     st.session_state.change_history = []
                     st.success("Changes has been reset.")
-
+                                        
                     # 5. PREVIEW DATA
                     # indent: 5 -> 4
                 st.markdown("")
@@ -906,34 +905,59 @@ if url:
                     st.dataframe(df.tail())
             
                     info_df = pd.DataFrame({"Column": df.columns,
-                        "Non-Null Count": df.notnull().sum().values,
                         "Null Count":df.isna().sum().values,
                         "Dtype": df.dtypes.values})
                     st.write("**Column Names and Data Types:**")
                     st.dataframe(info_df)
 
-                    # 8. SAVE DATA
-                                # indent: 8 -> 5
-                    if st.button('Save Transformed Data ⏭️', key='save_trans_data'):
-                        st.session_state['savedata_clicked'] = True
-                    
-                    if st.session_state['savedata_clicked']:
+                    # DROP FIELDS
+                    # indent: 5 (Drop Field)
+                    st.markdown("")
+                    if st.button('Drop Column ⏭️', key='drop_col'):
+                        st.session_state['dropcol_clicked'] = True
+                    if st.session_state['dropcol_clicked']:
                         st.markdown("----")
-                        st.subheader('📥 8. Save Transformed Data')
-                        for col in df.select_dtypes(include="object").columns:
-                            df[col] = df[col].astype(str)
+                        st.subheader("🗑️ 8. Drop Column")
+                        if "change_history2" not in st.session_state:
+                            st.session_state.change_history2 = []
+                                    
+                        df = st.session_state.df
+                        drop_col = []
+                        drop_col = st.multiselect("Choose column(s) to drop", options=[""]+list(df.columns))
+                        if st.button("Drop"):
+                            df_drop = None
+                            df_drop = df.drop(drop_col, axis=1)
+                            st.success(f"Successfully drop {drop_col} column")
+                            # st.write("Available columns: ", df_drop.columns)
+                            st.session_state.df = df_drop
+                            st.session_state.change_history2.append(drop_col)
+                                    
+                        if st.session_state.change_history2:
+                            for entry in st.session_state.change_history2:
+                                st.info(f"Dropped Columns: {entry}")
+                        else:
+                            st.markdown("*None*")
+                        
+                        # 8. SAVE DATA
+                                # indent: 8 -> 6
+                        if st.button('Save Transformed Data ⏭️', key='save_trans_data'):
+                            st.session_state['savedata_clicked'] = True
+                    
+                        if st.session_state['savedata_clicked']:
+                            st.markdown("----")
+                            st.subheader('📥 8. Save Transformed Data')
+                            for col in df.select_dtypes(include="object").columns:
+                                df[col] = df[col].astype(str)
                                 
-                        def csv_bytes(df):
-                            csv = StringIO()
-                            df.to_csv(csv, index=False)
-                            return csv.getvalue().encode("utf-8")
-                        try:
-                            if st.download_button(
-                            "📥 Download as CSV", data = csv_bytes(df), file_name="transformed.csv",
-                            mime="text/csv"):
-                                st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
-                        except Exception as e:
-                            st.error(f"❌ Error saving file: {e}")
+                            def csv_bytes(df):
+                                csv = StringIO()
+                                df.to_csv(csv, index=False)
+                                return csv.getvalue().encode("utf-8")
+                            try:
+                                if st.download_button("📥 Download as CSV", data = csv_bytes(df), file_name="transformed.csv", mime="text/csv"):
+                                    st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
+                            except Exception as e:
+                                st.error(f"❌ Error saving file: {e}")
                         #try:
                             #output = BytesIO()
                             #with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
