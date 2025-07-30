@@ -177,29 +177,30 @@ if url:
                         if claim_ratio:
                             if st.button("Group claim ratio"):
                                 try:
-                                    df_claim_ratio = df.copy()
-                                    df_claim_ratio[claim_ratio] = df_claim_ratio[claim_ratio].astype(float)
-                                    df_claim_ratio["Claim Ratio (group)"] = ""
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 0) & (df_claim_ratio[claim_ratio] <= 5), "Claim Ratio (group)"] = "0-5"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 5) & (df_claim_ratio[claim_ratio] <= 10), "Claim Ratio (group)"] = "5-10"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 10) & (df_claim_ratio[claim_ratio] <= 30), "Claim Ratio (group)"] = "10-30"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 30) & (df_claim_ratio[claim_ratio] <= 50), "Claim Ratio (group)"] = "30-50"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 50) & (df_claim_ratio[claim_ratio] <= 70), "Claim Ratio (group)"] = "50-70"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 70) & (df_claim_ratio[claim_ratio] <= 90), "Claim Ratio (group)"] = "70-90"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 90) & (df_claim_ratio[claim_ratio] <= 110), "Claim Ratio (group)"] = "90-110"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 110) & (df_claim_ratio[claim_ratio] <= 130), "Claim Ratio (group)"] = "110-130"
-                                    df_claim_ratio.loc[(df_claim_ratio[claim_ratio] > 130) & (df_claim_ratio[claim_ratio] <= 150), "Claim Ratio (group)"] = "130-150"
+                                    #df_claim_ratio = df.copy()
+                                    df = st.session_state.df
+                                    df[claim_ratio] = df[claim_ratio].astype(float)
+                                    df["Claim Ratio (group)"] = ""
+                                    df.loc[(df[claim_ratio] > 0) & (df[claim_ratio] <= 5), "Claim Ratio (group)"] = "0-5"
+                                    df.loc[(df[claim_ratio] > 5) & (df[claim_ratio] <= 10), "Claim Ratio (group)"] = "5-10"
+                                    df.loc[(df[claim_ratio] > 10) & (df[claim_ratio] <= 30), "Claim Ratio (group)"] = "10-30"
+                                    df.loc[(df[claim_ratio] > 30) & (df[claim_ratio] <= 50), "Claim Ratio (group)"] = "30-50"
+                                    df.loc[(df[claim_ratio] > 50) & (df[claim_ratio] <= 70), "Claim Ratio (group)"] = "50-70"
+                                    df.loc[(df[claim_ratio] > 70) & (df[claim_ratio] <= 90), "Claim Ratio (group)"] = "70-90"
+                                    df.loc[(df[claim_ratio] > 90) & (df[claim_ratio] <= 110), "Claim Ratio (group)"] = "90-110"
+                                    df.loc[(df[claim_ratio] > 110) & (df[claim_ratio] <= 130), "Claim Ratio (group)"] = "110-130"
+                                    df.loc[(df[claim_ratio] > 130) & (df[claim_ratio] <= 150), "Claim Ratio (group)"] = "130-150"
                                         
-                                    df_claim_ratio.loc[df_claim_ratio[claim_ratio] > 150, "Claim Ratio (group)"] = "150+"
-                                    df_claim_ratio.loc[df_claim_ratio[claim_ratio] == 0, "Claim Ratio (group)"] = "0"
-                                    st.dataframe(df_claim_ratio[[claim_ratio, "Claim Ratio (group)"]].head())
-                                    st.session_state.df = df_claim_ratio
+                                    df.loc[df[claim_ratio] > 150, "Claim Ratio (group)"] = "150+"
+                                    df.loc[df[claim_ratio] == 0, "Claim Ratio (group)"] = "0"
+                                    st.session_state.df = df
+                                    st.dataframe(df[[claim_ratio, "Claim Ratio (group)"]].head())
                                     st.success("Claim ratio successfully grouped and stored")
                                     st.session_state.change_history.append(
                                     "• Field `Claim Ratio (group)` created"
                                     )
                                 except Exception as e:
-                                    st.error(f"Error calculating age {e}")
+                                    st.error(f"Error grouping claim ratio {e}")
                                                                                                                  
                         # LAST SEGMENT ON PROGRESS (indent=6)
                     if selected_column == "Last Segmen":
@@ -212,7 +213,8 @@ if url:
                                 
                         if ktp:
                             if st.button("Validate KTP"):
-                                df_ktp =df.copy()
+                                #df_ktp =df.copy()
+                                df = st.session_state.df
                                         
                                 def ktp_val(ktp):
                                     if pd.isna(ktp) or ktp == "NAN" or ktp == "NA":
@@ -249,25 +251,25 @@ if url:
                                             
                                         return ktp, "M", dob
                                     
-                                df_ktp[f"{ktp}_val"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[0])
-                                df_ktp["Gender KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[1])
-                                df_ktp["DoB KTP"] = df_ktp[ktp].apply(lambda x: ktp_val(x)[2])
+                                df[f"{ktp}_val"] = df[ktp].apply(lambda x: ktp_val(x)[0])
+                                df["Gender KTP"] = df[ktp].apply(lambda x: ktp_val(x)[1])
+                                df["DoB KTP"] = df[ktp].apply(lambda x: ktp_val(x)[2])
                                         
-                                df_ktp["DoB KTP"] = pd.to_datetime(df_ktp["DoB KTP"], errors="coerce")
-                                df_ktp[dob_data] = pd.to_datetime(df_ktp[dob_data], errors="coerce")
+                                df["DoB KTP"] = pd.to_datetime(df["DoB KTP"], errors="coerce")
+                                df[dob_data] = pd.to_datetime(df[dob_data], errors="coerce")
                                         
-                                df_ktp["DoB Match"] = df_ktp["DoB KTP"].dt.date == df_ktp[dob_data].dt.date
-                                df_ktp["DoB Match"] = df_ktp["DoB Match"].map({True: "Yes", False: "No"})
-                                df_ktp["Gender Match"] = df_ktp["Gender KTP"] == df_ktp[gender_data]
-                                df_ktp["Gender Match"] = df_ktp["Gender Match"].map({True: "Yes", False: "No"})
+                                df["DoB Match"] = df["DoB KTP"].dt.date == df[dob_data].dt.date
+                                df["DoB Match"] = df["DoB Match"].map({True: "Yes", False: "No"})
+                                df["Gender Match"] = df["Gender KTP"] == df[gender_data]
+                                df["Gender Match"] = df["Gender Match"].map({True: "Yes", False: "No"})
                                 
-                                st.session_state.df = df_ktp
+                                st.session_state.df = df
 
                                 st.success("KTP validation complete")
                             
-                                st.dataframe(df_ktp[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]].head())
+                                st.dataframe(df[[ktp,f"{ktp}_val", dob_data, "DoB KTP", "DoB Match", gender_data, "Gender KTP", "Gender Match"]].head())
                                 st.session_state.change_history.append(
-                                    "• Field `KTP Validation` created"
+                                    "• Field `KTP_val`, `DoB KTP`, `DoB Match`, `Gender KTP`, `Gender Match` created"
                                 )       
                                 
                         # indent 6
@@ -275,7 +277,9 @@ if url:
                         phone_col = st.selectbox("Choose field that represents `phone number`", options=[""] + list(df.columns))
                         if phone_col:
                             if st.button("Validate phone number"):
-                                df_validated = df.copy()
+                                df = st.session_state.df
+                                #df_validated = df.copy()
+                                
                                 def validate_phone(phone):
                                     if pd.isna(phone):
                                         return "NA","Invalid: empty"
@@ -299,13 +303,13 @@ if url:
 
                                     return phone, "Valid"
                                             
-                                df_validated[f"{phone_col}_new"] = df_validated[phone_col].apply(lambda x: validate_phone(x)[0])
-                                df_validated[f"{phone_col}_status"] = df_validated[phone_col].apply(lambda x:validate_phone(x)[1])
-                                st.session_state.df = df_validated
+                                df[f"{phone_col}_new"] = df[phone_col].apply(lambda x: validate_phone(x)[0])
+                                df[f"{phone_col}_status"] = df[phone_col].apply(lambda x:validate_phone(x)[1])
+                                st.session_state.df = df
                                 st.success("Phone number validation complete")
-                                st.dataframe(df_validated[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]].head())
+                                st.dataframe(df[[phone_col,f"{phone_col}_new",f"{phone_col}_status"]].head())
                                 st.session_state.change_history.append(
-                                    "• Field `Phone Number Validation` created"
+                                    "• Field `Phone Number_new`, `Phone Number_status` created"
                                 )
                         
                         # DONE
@@ -315,14 +319,15 @@ if url:
                         if period_from and period_to:
                             if st.button("Calculate tahun periode polis"):
                                 try:
-                                    df_calc = df.copy()
-                                    df_calc[period_from] = pd.to_datetime(df_calc[period_from], errors='coerce')
-                                    df_calc[period_to] = pd.to_datetime(df_calc[period_to], errors='coerce')
-                                    df_calc["Tahun periode polis"] = (df_calc[period_to] - df_calc[period_from]).dt.days/365
-                                    df_calc["Tahun periode polis"] = df_calc["Tahun periode polis"].round(1)
-                                    st.dataframe(df_calc[[period_from, period_to, "Tahun periode polis"]].head())
+                                    df = st.session_state.df
+                                    #df_calc = df.copy()
+                                    df[period_from] = pd.to_datetime(df[period_from], errors='coerce')
+                                    df[period_to] = pd.to_datetime(df[period_to], errors='coerce')
+                                    df["Tahun Periode Polis"] = (df[period_to] - df[period_from]).dt.days/365
+                                    df["Tahun Periode Polis"] = df["Tahun Periode Polis"].round(1)
+                                    st.session_state.df = df
+                                    st.dataframe(df[[period_from, period_to, "Tahun Periode Polis"]].head())
 
-                                    st.session_state.df = df_calc
                                     st.success("`Tahun periode polis` successfully calculated and stored")
                                     st.session_state.change_history.append(
                                         "• Field `Tahun Periode Polis` created"
@@ -336,17 +341,18 @@ if url:
                         if dob:
                             if st.button("Calculate current age"):
                                 try:
-                                    df_age = df.copy()
-                                    df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
+                                    #df_age = df.copy()
+                                    df = st.session_state.df
+                                    df[dob] = pd.to_datetime(df[dob], errors='coerce')
                                     today = pd.to_datetime("today")
-                                    df_age["Age (current)"] = (today - df_age[dob]).dt.days / 365.25
-                                    df_age["Age (current)"] = df_age["Age (current)"].round(0)
+                                    df["Age (current)"] = (today - df[dob]).dt.days / 365.25
+                                    df["Age (current)"] = df["Age (current)"].round(0)
                                     
-                                    df_age["Age (current)"].loc[df_age["Age (current)"] > 99] = 0
-                                    df_age["Age (current)"].loc[df_age["Age (current)"] < 17] = 0
+                                    df["Age (current)"].loc[df["Age (current)"] > 99] = 0
+                                    df["Age (current)"].loc[df["Age (current)"] < 17] = 0
                                     
-                                    st.dataframe(df_age[[dob, "Age (current)"]].head())
-                                    st.session_state.df = df_age
+                                    st.dataframe(df[[dob, "Age (current)"]].head())
+                                    st.session_state.df = df
                                     st.success("Age (current) successfully calculated and stored")
                                     st.session_state.change_history.append(
                                     "• Field `Age (current)` created"
@@ -359,24 +365,26 @@ if url:
                         if age_group:
                             if st.button("Group age (current)"):
                                 try:
-                                    df_age_group = df.copy()
-                                    df_age_group[age_group] = df_age_group[age_group].astype(int)
-                                    df_age_group["Age group (current)"] = ""
-                                    df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (current)"] = "18-24"
-                                    df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (current)"] = "25-34"
-                                    df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (current)"] = "35-44"
-                                    df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (current)"] = "45-54"
-                                    df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (current)"] = "55-64"
-                                    df_age_group.loc[df_age_group[age_group] >= 65, "Age group (current)"] = "65+"
-                                    df_age_group.loc[df_age_group[age_group] == 0, "Age group (current)"] = "NA"
-                                    st.dataframe(df_age_group[[age_group, "Age group (current)"]].head())
-                                    st.session_state.df = df_age_group
-                                    st.success("Age group (current) successfully calculated and stored")
+                                    df = st.session_state.df
+                                    #df[age_group] = df[age_group].astype(int)
+                                    df[age_group] = pd.to_numeric(df[age_group], errors='coerce').fillna(0).astype(int)
+                                    df["Age group (current)"] = ""
+                                    df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (current)"] = "18-24"
+                                    df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (current)"] = "25-34"
+                                    df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (current)"] = "35-44"
+                                    df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (current)"] = "45-54"
+                                    df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (current)"] = "55-64"
+                                    df.loc[df[age_group] >= 65, "Age group (current)"] = "65+"
+                                    df.loc[df[age_group] == 0, "Age group (current)"] = "NA"
+                                    st.session_state.df = df
+                                    st.dataframe(df[[age_group, "Age group (current)"]].head())
+                                    
+                                    st.success("Age group (current) successfully grouped and stored")
                                     st.session_state.change_history.append(
                                         "• Field `Age Group (current)` created"
                                     )
                                 except Exception as e:
-                                    st.error(f"Error calculating age {e}")
+                                    st.error(f"Error age grouping {e}")
                                             
                     if selected_column == "Age (order)":
                         dob = st.selectbox("Choose field that represents `birth date`", options=[""] + list(df.columns))
@@ -384,18 +392,18 @@ if url:
                         if dob:
                             if st.button("Calculate age based on order"):
                                 try:
-                                    df_age = df.copy()
-                                    df_age[dob] = pd.to_datetime(df_age[dob], errors='coerce')
-                                    df_age[policy] = pd.to_datetime(df_age[policy], errors='coerce')
+                                    df = st.session_state.df
+                                    df[dob] = pd.to_datetime(df[dob], errors='coerce')
+                                    df[policy] = pd.to_datetime(df[policy], errors='coerce')
                                             
-                                    df_age["Age (order)"] = (df_age[policy] - df_age[dob]).dt.days / 365.25
-                                    df_age["Age (order)"] = df_age["Age (order)"].round(0)
+                                    df["Age (order)"] = (df[policy] - df[dob]).dt.days / 365.25
+                                    df["Age (order)"] = df["Age (order)"].round(0)
                                     
-                                    df_age["Age (order)"].loc[df_age["Age (order)"] > 99] = 0
-                                    df_age["Age (order)"].loc[df_age["Age (order)"] < 17] = 0
+                                    df["Age (order)"].loc[df["Age (order)"] > 99] = 0
+                                    df["Age (order)"].loc[df["Age (order)"] < 17] = 0
                                     
-                                    st.dataframe(df_age[[dob, policy, "Age (order)"]].head())
-                                    st.session_state.df = df_age
+                                    st.dataframe(df[[dob, policy, "Age (order)"]].head())
+                                    st.session_state.df = df
                                     st.success("Age (order) successfully calculated and stored")
                                     st.session_state.change_history.append(
                                     "• Field `Age (order)` created"
@@ -408,18 +416,19 @@ if url:
                         if age_group:
                             if st.button("Group age (order)"):
                                 try:
-                                    df_age_group = df.copy()
-                                    df_age_group[age_group] = df_age_group[age_group].astype(int)
-                                    df_age_group["Age group (order)"] = ""
-                                    df_age_group.loc[(df_age_group[age_group] > 17) & (df_age_group[age_group] < 25), "Age group (order)"] = "18-24"
-                                    df_age_group.loc[(df_age_group[age_group] > 24) & (df_age_group[age_group] < 35), "Age group (order)"] = "25-34"
-                                    df_age_group.loc[(df_age_group[age_group] > 34) & (df_age_group[age_group] < 45), "Age group (order)"] = "35-44"
-                                    df_age_group.loc[(df_age_group[age_group] > 44) & (df_age_group[age_group] < 55), "Age group (order)"] = "45-54"
-                                    df_age_group.loc[(df_age_group[age_group] > 54) & (df_age_group[age_group] < 65), "Age group (order)"] = "55-64"
-                                    df_age_group.loc[df_age_group[age_group] >= 65, "Age group (order)"] = "65+"
-                                    df_age_group.loc[df_age_group[age_group] == 0, "Age group (order)"] = "NA"
-                                    st.dataframe(df_age_group[[age_group, "Age group (order)"]].head())
-                                    st.session_state.df = df_age_group
+                                    df = st.session_state.df
+                                    #df = df.copy()
+                                    df[age_group] = df[age_group].astype(int)
+                                    df["Age group (order)"] = ""
+                                    df.loc[(df[age_group] > 17) & (df[age_group] < 25), "Age group (order)"] = "18-24"
+                                    df.loc[(df[age_group] > 24) & (df[age_group] < 35), "Age group (order)"] = "25-34"
+                                    df.loc[(df[age_group] > 34) & (df[age_group] < 45), "Age group (order)"] = "35-44"
+                                    df.loc[(df[age_group] > 44) & (df[age_group] < 55), "Age group (order)"] = "45-54"
+                                    df.loc[(df[age_group] > 54) & (df[age_group] < 65), "Age group (order)"] = "55-64"
+                                    df.loc[df[age_group] >= 65, "Age group (order)"] = "65+"
+                                    df.loc[df[age_group] == 0, "Age group (order)"] = "NA"
+                                    st.dataframe(df[[age_group, "Age group (order)"]].head())
+                                    st.session_state.df = df
                                     st.success("Age group (order) successfully calculated and stored")
                                     st.session_state.change_history.append(
                                     "• Field `Age Group (order)` created"
@@ -431,7 +440,8 @@ if url:
                         post_code = st.selectbox("Choose field that represents address", options=[""] + list(df.columns))
                         if post_code:
                             if st.button("Extract post code"):
-                                df_post = df.copy()
+                                #df = df.copy()
+                                df = st.session_state.df
                                 def extract_postcode(text):
                                     if pd.isna(text):
                                         return ""
@@ -441,9 +451,9 @@ if url:
                                         if len(set(code)) > 2:
                                             return code
                                     return ""
-                                df_post["Post Code"] = df_post[post_code].apply(extract_postcode)
-                                st.dataframe(df_post[[post_code, "Post Code"]].head())
-                                st.session_state.df = df_post
+                                df["Post Code"] = df[post_code].apply(extract_postcode)
+                                st.dataframe(df[[post_code, "Post Code"]].head())
+                                st.session_state.df = df
                                 st.success("Post code extracted successfully")
                                 st.session_state.change_history.append(
                                     "• Field `Post Code` created"
@@ -454,7 +464,8 @@ if url:
                         kota = st.selectbox("Choose field that represents post code", options=[""] + list(df.columns))
                         if kota:
                             if st.button("City mapping"):
-                                df_kota = df.copy()
+                                #df = df.copy()
+                                df = st.session_state.df
                                 kodepos = {
                                     '236' : 'Kab. Aceh Barat', '2376':'Kab. Aceh Barat Daya', '233' : 'Kab. Aceh Besar', '234' : 'Kab. Aceh Besar','235' : 'Kab. Aceh Besar',
                                            '236' : 'Kab. Aceh Besar','237' : 'Kab. Aceh Besar', '238' : 'Kab. Aceh Besar', '239' : 'Kab. Aceh Besar',
@@ -692,9 +703,9 @@ if url:
                                     #return kodepos.get(prefix3, postal) 
                                     return "Unknown"
                                             
-                                df_kota['Kota/Kab.'] = df_kota[kota].apply(map_postal_code)
-                                st.dataframe(df_kota[[kota, "Kota/Kab."]].head())
-                                st.session_state.df = df_kota
+                                df['Kota/Kab.'] = df[kota].apply(map_postal_code)
+                                st.dataframe(df[[kota, "Kota/Kab."]].head())
+                                st.session_state.df = df
                                 st.success("Kota mapped successfully")
                                 st.session_state.change_history.append(
                                         "• Field `Kota/Kab.` created"
@@ -704,7 +715,8 @@ if url:
                         prov = st.selectbox("Choose field that represents `post code`", options=[""] + list(df.columns))
                         if prov:
                             if st.button("Provinsi mapping"):
-                                df_prov = df.copy()
+                                #df = df.copy()
+                                df = st.session_state.df
                                 kode_pos_prov = {'23':'Aceh', '24':'Aceh', '80':'Bali', '81':'Bali', '82':'Bali', '15':'Banten', '42':'Banten', '38':'Bengkulu',
                                                  '39':'Bengkulu', '55':'DI Yogyakarta','10':'DKI Jakarta', '11':'DKI Jakarta', '12':'DKI Jakarta',
                                                  '13':'DKI Jakarta', '14':'DKI Jakarta','96':'Gorontalo','36':'Jambi', '37':'Jambi',
@@ -747,9 +759,9 @@ if url:
                                         
                                     return "Unknown"
                                         
-                                df_prov['Provinsi'] = df_prov[prov].apply(map_postal_code)
-                                st.dataframe(df_prov[[prov, "Provinsi"]].head())
-                                st.session_state.df = df_prov
+                                df['Provinsi'] = df[prov].apply(map_postal_code)
+                                st.dataframe(df[[prov, "Provinsi"]].head())
+                                st.session_state.df = df
                                 st.success("Province mapped successfully")
                                 st.session_state.change_history.append(
                                     "• Field `Province` created"
@@ -760,7 +772,8 @@ if url:
                         chas = st.selectbox("Choose field that represents chassis number", options=[""] + list(df.columns))
                         if chas:
                             if st.button("Chassis validation"):
-                                df_chassis = df.copy()
+                                #df = df.copy()
+                                df = st.session_state.df
                                 def validate_chassis(chassis):
                                     if pd.isna(chassis):
                                         return "Invalid: empty"
@@ -771,10 +784,10 @@ if url:
                                         return f"Invalid: Length {len(chassis)}"
 
                                     return chassis
-                                df_chassis[f"{chas}_val"] = df_chassis[chas].apply(lambda x: validate_chassis(x))
-                                st.session_state.df = df_chassis
+                                df[f"{chas}_val"] = df[chas].apply(lambda x: validate_chassis(x))
+                                st.session_state.df = df
                                 st.success("Chassis number validation complete")
-                                st.dataframe(df_chassis[[chas,f"{chas}_val"]].head())
+                                st.dataframe(df[[chas,f"{chas}_val"]].head())
                                 st.session_state.change_history.append(
                                         "• Field `Chassis Validation` created"
                                 )
@@ -784,7 +797,8 @@ if url:
                         gross_prem = st.selectbox("Choose field that represents `gross premi`", options=[""]+list(df.columns))
                         if gross_prem:
                             if st.button("Calculate gross premi/year"):
-                                df_prem = df.copy()
+                                df = st.session_state.df
+                                #df = df.copy()
                                 def validate_prem(premi):
                                     if pd.isna(premi):
                                         return "Invalid: empty gross premi"
@@ -797,13 +811,13 @@ if url:
                                     period = int(period)
                                     return period
                                     
-                                premi = df_prem[gross_prem].apply(lambda x: validate_prem(x))
-                                period = df_prem[periode_polis].apply(lambda x: validate_period(x))
+                                premi = df[gross_prem].apply(lambda x: validate_prem(x))
+                                period = df[periode_polis].apply(lambda x: validate_period(x))
                                 
-                                df_prem["Gross Premi/Year"] = premi/period
-                                st.session_state.df = df_prem
+                                df["Gross Premi/Year"] = premi/period
+                                st.session_state.df = df
                                 st.success("Gross premi/year successfully calculated")
-                                st.dataframe(df_prem[[periode_polis,gross_prem,"Gross Premi/Year"]].head())
+                                st.dataframe(df[[periode_polis,gross_prem,"Gross Premi/Year"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Gross Premi/Year` created"
                                 )
@@ -813,7 +827,8 @@ if url:
                         group_premi = st.selectbox("Choose field that represents `Gross Premi/Year`", options=[""]+list(df.columns))
                         if group_premi:
                             if st.button("Group gross premi/year"):
-                                df_group_prem = df.copy()
+                                #df = df.copy()
+                                df = st.session_state.df
                                 def grouping_premi(premi):
                                     premi = pd.to_numeric(premi, errors="coerce")
                                     if pd.isna(premi):
@@ -834,11 +849,11 @@ if url:
                                         return '25-30 jt'
                                     return '30jt+'
                                        
-                                df_group_prem['Grouping Gross Premi/Year'] = df_group_prem[group_premi].apply(grouping_premi)
+                                df['Grouping Gross Premi/Year'] = df[group_premi].apply(grouping_premi)
                                 
-                                st.session_state.df = df_group_prem
+                                st.session_state.df = df
                                 st.success("Grouping gross premi/year successfully created")
-                                st.dataframe(df_group_prem[[group_premi,"Grouping Gross Premi/Year"]].head())
+                                st.dataframe(df[[group_premi,"Grouping Gross Premi/Year"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Grouping Gross Premi/Year` created"
                                 )
@@ -847,7 +862,8 @@ if url:
                         group_tsi = st.selectbox("Choose field that represents `Sum Insured`", options=[""]+list(df.columns))
                         if group_tsi:
                             if st.button("Group sum insured"):
-                                df_group_tsi = df.copy()
+                                df = st.session_state.df
+                                #df = df.copy()
                                 def grouping_tsi(tsi):
                                     tsi = pd.to_numeric(tsi, errors="coerce")
                                     if pd.isna(tsi):
@@ -865,11 +881,11 @@ if url:
                                     elif 800000000 <= tsi < 1500000000:
                                         return '800 jt-1.5 m'
                                     return '1.5m+'
-                                df_group_tsi['Grouping Sum Insured'] = df_group_tsi[group_tsi].apply(grouping_tsi)
+                                df['Grouping Sum Insured'] = df[group_tsi].apply(grouping_tsi)
                                 
-                                st.session_state.df = df_group_tsi
+                                st.session_state.df = df
                                 st.success("Grouping sum insured successfully created")
-                                st.dataframe(df_group_tsi[[group_tsi,"Grouping Sum Insured"]].head())
+                                st.dataframe(df[[group_tsi,"Grouping Sum Insured"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Grouping Sum Insured` created"
                                 )
