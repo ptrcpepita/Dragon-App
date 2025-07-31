@@ -134,7 +134,7 @@ if url:
                         
                             st.success(f"Successfully remove duplicate based on {', '.join(selected_cols)} using '{keep_option}'")
                             st.write("New data:")
-                            st.dataframe(df)
+                            st.dataframe(df.head())
                             st.write("New data shape: ",len(df))
                             st.session_state.df = df
 
