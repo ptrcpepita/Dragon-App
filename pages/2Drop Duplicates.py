@@ -3,6 +3,7 @@ import io
 import os
 from io import BytesIO
 import streamlit as st
+import pandas as pd
 
 if "removedupli_clicked" not in st.session_state:
     st.session_state['removedupli_clicked'] = False
