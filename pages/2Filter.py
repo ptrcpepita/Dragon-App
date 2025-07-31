@@ -51,7 +51,7 @@ if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
     st.session_state.uploaded_file_name = current_file_name
     
 elif uploaded_file and "uploaded_file_name" not in st.session_state:
-    st.session_state.uploaded_file_name = current_file_name'
+    st.session_state.uploaded_file_name = current_file_name
 
 st.markdown("---")
 st.subheader("📂 1. Insert an Excel File Link")
