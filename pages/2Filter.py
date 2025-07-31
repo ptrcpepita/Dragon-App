@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import io
 from io import BytesIO
+import requests
 import re
 from datetime import datetime
 import xlsxwriter
@@ -50,18 +51,42 @@ if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
     st.session_state.uploaded_file_name = current_file_name
     
 elif uploaded_file and "uploaded_file_name" not in st.session_state:
+    st.session_state.uploaded_file_name = current_file_name'
+
+st.markdown("---")
+st.subheader("📂 1. Insert an Excel File Link")
+url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
+
+
+current_file_name = os.path.basename(url) if url else None
+if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
+    and st.session_state.url_name != current_file_name):
+    for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
+        st.session_state.pop(key, None)
+    st.session_state.url_name = current_file_name
+    
+elif url and "url_name" not in st.session_state:
     st.session_state.uploaded_file_name = current_file_name
         
-if uploaded_file:
+if url:
     try:
         if "original_df" not in st.session_state:
-            df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
+            #df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
             
+            #st.session_state.original_df = df.copy() # original data
+            #st.session_state.df = df.copy() # ini working copy yang user akan pake
+            # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
+            #st.session_state.change_history = []
+            #st.success("Dataset loaded successfully. Click button below to filter the data")
+            
+            response = requests.get(url)
+            response.raise_for_status()  # Raise error for bad status
+            df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
+
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
-            # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
-            st.session_state.change_history = []
-            st.success("Dataset loaded successfully. Click button below to filter the data")
+            #st.session_state.change_history = []
+            st.success("Dataset loaded successfully. Click button below to filter the data"
 
         # 2. PREVIEW DATA
         # indent: 2
@@ -74,10 +99,9 @@ if uploaded_file:
             st.subheader('📈 2. Preview Data')
             st.write("**Data shape:**", df_original.shape)
             st.write("**Data:**")
-            st.dataframe(df_original)
+            st.dataframe(df_original.head(10))
 
             info_df = pd.DataFrame({"Column": df_original.columns,
-                                    "Non-Null Count": df_original.notnull().sum().values,
                                     "Null Count":df_original.isna().sum().values,
                                     "Dtype": df_original.dtypes.values})
 
@@ -153,7 +177,7 @@ if uploaded_file:
                 st.markdown("")
                 st.markdown("")
                 if st.button("🔄 Reset Filter"):
-                    st.session_state.df = st.session_state.original_df.copy()
+                    st.session_state.df = st.session_state.original_df
                     st.session_state.filtered_cols = []
                     st.success("Filter reset!")
                     
@@ -166,10 +190,9 @@ if uploaded_file:
                     st.subheader('🎯 4. Preview Filtered Data')
                     st.write("**Data shape:**", df.shape)
                     st.write("**Data:**")
-                    st.dataframe(df)
+                    st.dataframe(df.head(10))
 
                     info_df = pd.DataFrame({"Column": df.columns,
-                                    "Non-Null Count": df.notnull().sum().values,
                                     "Null Count":df.isna().sum().values,
                                     "Dtype": df.dtypes.values})
                     st.write("**Column Names and Data Types:**")
