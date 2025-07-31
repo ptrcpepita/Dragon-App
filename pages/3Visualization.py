@@ -43,33 +43,33 @@ st.subheader("📂 1. Insert an Excel File Link")
 
 url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
 
-current_file_name = os.path.basename(url) if url else None
-if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
-    and st.session_state.url_name != current_file_name):
-    for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
-        st.session_state.pop(key, None)
-    st.session_state.url_name = current_file_name
+# current_file_name = os.path.basename(url) if url else None
+# if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
+    # and st.session_state.url_name != current_file_name):
+    # for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
+        # st.session_state.pop(key, None)
+    # st.session_state.url_name = current_file_name
     
-elif url and "url_name" not in st.session_state:
-    st.session_state.uploaded_file_name = current_file_name
+# elif url and "url_name" not in st.session_state:
+    # st.session_state.uploaded_file_name = current_file_name
 
 if url:
-    try:
-        if "original_df" not in st.session_state:
-            response = requests.get(url)
-            response.raise_for_status()  # Raise error for bad status
-            df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
+    #try:
+        #if "original_df" not in st.session_state:
+    response = requests.get(url)
+    response.raise_for_status()  # Raise error for bad status
+    df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
 
-            st.session_state.original_df = df.copy() # original data
-            st.session_state.df = df.copy() # ini working copy yang user akan pake
+    st.session_state.original_df = df.copy() # original data
+    st.session_state.df = df.copy() # ini working copy yang user akan pake
             # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
             # st.session_state.change_history = []
-            st.success("Dataset loaded successfully. Choose one of the buttons below to plot the data.")
-            if st.button("Visualize data ⏭️"):
-                st.session_state.plot_clicked = True
+    st.success("Dataset loaded successfully. Choose one of the buttons below to plot the data.")
+    if st.button("Visualize data ⏭️"):
+        st.session_state.plot_clicked = True
                 # st.session_state.df = df.copy()
-            if st.button("Comparison chart ⏭️"): 
-                st.session_state.plot_clicked = False
+    if st.button("Comparison chart ⏭️"): 
+        st.session_state.plot_clicked = False
                 # st.session_state.df = df.copy()
 else:
     st.info("Please insert a link of an Excel file to get started.")
