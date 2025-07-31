@@ -4,6 +4,10 @@ from io import BytesIO
 if "removedupli_clicked" not in st.session_state:
     st.session_state['removedupli_clicked'] = False
 
+st.markdown("## 🔄 Drop Duplicate Data")
+
+st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d24544b50e00fb68cea9b8a98f2/asset/userflow_transform.png", width=650)
+
 st.subheader("📂 1. Insert an Excel File Link")
 
 url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
