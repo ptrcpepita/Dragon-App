@@ -86,7 +86,7 @@ if url:
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
             #st.session_state.change_history = []
-            st.success("Dataset loaded successfully. Click button below to filter the data"
+            st.success("Dataset loaded successfully. Click button below to filter the data")
 
         # 2. PREVIEW DATA
         # indent: 2
