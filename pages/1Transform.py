@@ -136,10 +136,54 @@ if url:
                 transform_opt = ['KTP/ID Validation', 'Phone Number Validation', 'Tahun Periode Polis',
                                     'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kota/Kab.', 'Provinsi',
                                     'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Grouping Claim Ratio','Grouping Claim Frequency','Last Segmen',
-                                'Last Branch', 'Vehicle Count (all time)', 'Vehicle Count (polis aktif)']
+                                'Last Branch', 'Vehicle Count (all time)', 'Vehicle Count (polis aktif)', 'Jumlah Polis (all time)', 'Jumlah Polis (aktif)']
             
                 selected_column = st.selectbox("Transformation Options", options=[""] + transform_opt)
                 if selected_column:
+                    if selected_column == 'Jumlah Polis (aktif)':
+                        polis = st.selectbox("Choose field that represents `Policy No`", options=[""] + list(df.columns))
+                        period_to = st.selectbox("Choose field that represents `Period To`", options=[""] + list(df.columns))
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
+                        target_date = st.text_input("Input date bound with format MM-DD-YYYY (e.g. 07-31-2025 to find policy above 31st July 2025)")
+                        if polis:
+                            if st.button("Count number of policy no (aktif)"):
+                                df = st.session_state.df
+                                df[period_to] = pd.to_datetime(df[period_to])
+                                target_date = pd.to_datetime(target_date)
+                                filtered = df[df[period_to] > target_date]
+                                unique = (
+                                    filtered.groupby(cust_id)[polis].nunique().reset_index().rename(columns = {polis: "Jumlah Polis (aktif)"})
+                                )
+                                df = df.merge(unique, on = cust_id, how='left')
+                        
+                                st.session_state.df = df
+
+                                st.success("Jumlah polis (aktif) successfully created")
+                            
+                                st.dataframe(df[[cust_id, period_to, "Jumlah Polis (aktif)"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Jumlah Polis (aktif)` created"
+                                )
+                                
+                    if selected_column == 'Jumlah Polis (all time)':
+                        polis = st.selectbox("Choose field that represents `Policy No`", options=[""] + list(df.columns))
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
+                        if chassis:
+                            if st.button("Count number of policy no (all time)"):
+                                df = st.session_state.df
+                                unique = (
+                                    df.groupby(cust_id)[polis].nunique().reset_index().rename(columns = {polis: "Jumlah Polis (all time)"})
+                                )
+                                df = df.merge(unique, on = cust_id, how='left')
+                        
+                                st.session_state.df = df
+
+                                st.success("Jumlah Polis (all time) successfully created")
+                            
+                                st.dataframe(df[[cust_id, "Jumlah Polis (all time)"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Jumlah Polis (all time)` created"
+                                )
 
                     if selected_column == 'Vehicle Count (polis aktif)':
                         chassis = st.selectbox("Choose field that represents `Chassis Number`", options=[""] + list(df.columns))
