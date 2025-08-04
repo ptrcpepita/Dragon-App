@@ -42,6 +42,7 @@ if url:
         if st.button('Remove Duplicate ⏭️'):
             st.session_state['removedupli_clicked'] = True
         df_original = st.session_state.original_df
+        df = st.session_state.df
         
         if st.session_state['removedupli_clicked']:
             st.markdown("---")
