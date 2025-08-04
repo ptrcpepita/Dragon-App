@@ -59,7 +59,7 @@ if url:
             df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
             st.session_state.original_df = df.copy()
             st.session_state.df = df.copy()
-            df = st.session_state.df
+            # df = st.session_state.df
             st.success("File loaded successfully!")
             st.write("Data Preview:")
             st.dataframe(df.head(10))  
