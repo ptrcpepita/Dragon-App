@@ -138,14 +138,14 @@ if url:
                             st.write("New data shape: ",len(df))
                             st.session_state.df = df
 
-        st.write("")
-        st.markdown("")
-        st.markdown("")
-        st.write("")
-        st.write("")
-        if st.button("🔄🔄 Reset All", key='reset_all'):
-            st.session_state.clear()
-            st.rerun()
+            st.write("")
+            st.markdown("")
+            st.markdown("")
+            st.write("")
+            st.write("")
+            if st.button("🔄🔄 Reset All", key='reset_all'):
+                st.session_state.clear()
+                st.rerun()
                         
     except Exception as e:
         st.error(f"❌ Error loading file: {e}")
