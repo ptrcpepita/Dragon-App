@@ -193,6 +193,7 @@ if st.session_state.get("plot_clicked"):
     st.write("")
     st.write("")
     if st.button("🔄🔄 Reset All"):
+        url = None
         st.session_state.clear()
         st.rerun()
         
@@ -335,5 +336,6 @@ elif st.session_state.get("plot_clicked") == False:
     st.write("")
     st.write("")
     if st.button("🔄🔄 Reset All"):
+        url = None
         st.session_state.clear()
         st.rerun()           
