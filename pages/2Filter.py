@@ -206,24 +206,40 @@ if url:
                     
                     # INDENT 5
                     # SAVE DATA
-                    if st.button('Save Data ⏭️'):
-                        st.session_state['savedata_clicked'] = True
-                    if st.session_state['savedata_clicked']:
-                        st.markdown("---")
-                        st.subheader('📥 5. Save Filtered Data')
-                        try:
-                            output = BytesIO()
-                            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                                df.to_excel(writer, index=False, sheet_name='Sheet1')
-                                writer.close()
-                                processed_data = output.getvalue()
+                    #if st.button('Save Data ⏭️'):
+                        #st.session_state['savedata_clicked'] = True
+                    #if st.session_state['savedata_clicked']:
+                       # st.markdown("---")
+                       # st.subheader('📥 5. Save Filtered Data')
+                       # try:
+                           # output = BytesIO()
+                           # with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                               # df.to_excel(writer, index=False, sheet_name='Sheet1')
+                               # writer.close()
+                               # processed_data = output.getvalue()
                 
-                            if st.download_button(label="Download as Excel", data=processed_data,
-                                                file_name=f"filtered_{uploaded_file.name}.xlsx",
-                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-                                st.success("Dataset successfully saved.")
-                        except Exception as e:
-                            st.error(f"❌ Error saving file: {e}")
+                           # if st.download_button(label="Download as Excel", data=processed_data,
+                                            #    file_name=f"filtered_{uploaded_file.name}.xlsx",
+                                            #    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+                             #   st.success("Dataset successfully saved.")
+                      #  except Exception as e:
+                           # st.error(f"❌ Error saving file: {e}")
+                    
+                    # Indent 5 (Save Data)
+                    if st.session_state['savedata_clicked']:
+                        st.markdown("----")
+                        st.subheader('📥 Save Filtered Data')
+                        for col in df.select_dtypes(include="object").columns:
+                            df[col] = df[col].astype(str)
+
+                        @st.cache_data
+                        def csv_bytes(df):
+                            return df.to_csv(index=False).encode("utf-8")
+
+                        csv_data = csv_bytes(st.session_state.df)
+                        if st.download_button("📥 Download as CSV", data = csv_data, file_name="filtered_data.csv", mime="text/csv"):
+                            st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
+                            # st.error(f"❌ Error saving file: {e}")
                                            
             st.write("")
             st.write("")
