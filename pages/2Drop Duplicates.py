@@ -13,7 +13,6 @@ st.markdown("## 🔄 Drop Duplicate Data")
 st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d24544b50e00fb68cea9b8a98f2/asset/userflow_transform.png", width=650)
 
 st.subheader("📂 Insert an Excel File Link")
-
 url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
 
 current_file_name = os.path.basename(url) if url else None
@@ -32,23 +31,23 @@ if url:
             response = requests.get(url)
             response.raise_for_status()  # Raise error for bad status
             df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
-            st.session_state.original_df = df.copy()
-            st.session_state.df = df.copy()
-            df = st.session_state.df
-            st.success("File loaded successfully!")
-            st.write("Data Preview:")
-            st.dataframe(df.head(10))  
+            
+            st.session_state.original_df = df.copy() # original data
+            st.session_state.df = df.copy() # ini working copy yang user akan pake
+            st.success("Dataset loaded successfully. Click button below to transform the data")
         
             # REMOVE DUPLICATE
             # indent: 2
         st.markdown("")
-        if st.button('Remove Duplicate ⏭️', key='dupli'):
+        if st.button('Remove Duplicate ⏭️'):
             st.session_state['removedupli_clicked'] = True
 
         if st.session_state['removedupli_clicked']:
             st.markdown("---")
             st.subheader('📑 Remove Duplicate')
             st.write("Data shape: ", {len(df)})
+            st.write("Data preview:")
+            st.dataframe(df.head(10))
             input_dupli = st.number_input("How many base column to remove duplicate?", min_value=0, max_value =len(df.columns), step=1, format='%d', key='num_dupli')
             st.write("min: 1, max:", len(df.columns))
 
