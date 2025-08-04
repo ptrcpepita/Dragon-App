@@ -136,10 +136,35 @@ if url:
                 transform_opt = ['KTP/ID Validation', 'Phone Number Validation', 'Tahun Periode Polis',
                                     'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kota/Kab.', 'Provinsi',
                                     'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Grouping Claim Ratio','Grouping Claim Frequency','Last Segmen',
-                                'Last Branch']
+                                'Last Branch', 'Vehicle Count (all time)', 'Vehicle Count (polis aktif)']
             
                 selected_column = st.selectbox("Transformation Options", options=[""] + transform_opt)
                 if selected_column:
+
+                    if selected_column == 'Vehicle Count (polis aktif)':
+                        chassis = st.selectbox("Choose field that represents `Chassis Number`", options=[""] + list(df.columns))
+                        period_to = st.selectbox("Choose field that represents `Period To`", options=[""] + list(df.columns))
+                        cust_id = st.selextbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
+                        target_date = st.text_input("Input date bound with format MM-DD-YYYY (e.g. 07-11-2026 to find policy below 11th July 2026)")
+                        if chassis:
+                            if st.button("Count number of vehicle (polis aktif)"):
+                                df = st.session_state.df
+                                df[period_to] = pd.to_datetime(df[period_to])
+                                target_date = pd.to_datetime(target_date)
+                                filtered = df[df[period_to] < target_date]
+                                unique = (
+                                    filtered.groupby(cust_id)[chassis].nunique().reset_index().rename(columns = {chassis: "Vehicle Count (polis aktif)"})
+                                )
+                                df = df.merge(unique, on = cust_id, how='left')
+                        
+                                st.session_state.df = df
+
+                                st.success("Vehicle count (polis aktif) successfully created")
+                            
+                                st.dataframe(df[[cust_id, period_to, "Vehicle Count (polis aktif)"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Vehicle Count (polis aktif)` created"
+                                )
 
                     if selected_column == "Grouping Claim Ratio":
                         claim_ratio = st.selectbox("Choose field that represents `Claim Ratio`", options=[""] + list(df.columns))
