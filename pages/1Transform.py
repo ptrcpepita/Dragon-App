@@ -145,13 +145,13 @@ if url:
                         chassis = st.selectbox("Choose field that represents `Chassis Number`", options=[""] + list(df.columns))
                         period_to = st.selectbox("Choose field that represents `Period To`", options=[""] + list(df.columns))
                         cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
-                        target_date = st.text_input("Input date bound with format MM-DD-YYYY (e.g. 07-11-2026 to find policy below 11th July 2026)")
+                        target_date = st.text_input("Input date bound with format MM-DD-YYYY (e.g. 07-31-2025 to find policy above 31st July 2025)")
                         if chassis:
                             if st.button("Count number of vehicle (polis aktif)"):
                                 df = st.session_state.df
                                 df[period_to] = pd.to_datetime(df[period_to])
                                 target_date = pd.to_datetime(target_date)
-                                filtered = df[df[period_to] < target_date]
+                                filtered = df[df[period_to] > target_date]
                                 unique = (
                                     filtered.groupby(cust_id)[chassis].nunique().reset_index().rename(columns = {chassis: "Vehicle Count (polis aktif)"})
                                 )
@@ -164,6 +164,26 @@ if url:
                                 st.dataframe(df[[cust_id, period_to, "Vehicle Count (polis aktif)"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Vehicle Count (polis aktif)` created"
+                                )
+                                
+                    if selected_column == 'Vehicle Count (all time)':
+                        chassis = st.selectbox("Choose field that represents `Chassis Number`", options=[""] + list(df.columns))
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
+                        if chassis:
+                            if st.button("Count number of vehicle (all time)"):
+                                df = st.session_state.df
+                                unique = (
+                                    df.groupby(cust_id)[chassis].nunique().reset_index().rename(columns = {chassis: "Vehicle Count (all time)"})
+                                )
+                                df = df.merge(unique, on = cust_id, how='left')
+                        
+                                st.session_state.df = df
+
+                                st.success("Vehicle count (all time) successfully created")
+                            
+                                st.dataframe(df[[cust_id, "Vehicle Count (all time)"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Vehicle Count (all time)` created"
                                 )
 
                     if selected_column == "Grouping Claim Ratio":
