@@ -35,13 +35,14 @@ if url:
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
             st.success("Dataset loaded successfully. Click button below to transform the data")
-        
+            
             # REMOVE DUPLICATE
             # indent: 2
         st.markdown("")
         if st.button('Remove Duplicate ⏭️'):
             st.session_state['removedupli_clicked'] = True
-
+        df_original = st.session_state.original_df
+        
         if st.session_state['removedupli_clicked']:
             st.markdown("---")
             st.subheader('📑 Remove Duplicate')
