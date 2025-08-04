@@ -170,9 +170,27 @@ if url:
                                 #except Exception as e:
                                     #st.error(f"Error grouping claim ratio {e}")
                                                                                                                  
-                        # LAST SEGMENT ON PROGRESS (indent=6)
+                    # LAST SEGMENT ON PROGRESS (indent=6)
                     if selected_column == "Last Segmen":
-                        st.markdown("on process")
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or unique ID of a customer", options=[""] + list(df.columns))
+                        period_from = st.selectbox("Choose field that represents `Period From` of policy", options=[""] + list(df.columns))
+                        segment = st.selectbox("Choose field that represents `Segment`", options=[""] + list(df.columns))
+
+                        if cust_id:
+                            if st.button("Search last segment"):
+                                df = st.session_state.df
+                                df[period_from] = pd.to_datetime(df[period_from])
+                                idx = df.groupby(cust_id)[period_from].idxmax()
+                                last_segment = df.loc[idx, [cust_id, segment]].rename(columns={segment: "Last Segment"})
+                                df = df.merge(last_segment, on=cust_id, how="left")
+                                st.session_state.df = df
+
+                                st.success("Search for last segment complete")
+                            
+                                st.dataframe(df[[cust_id, period_from, segment, "Last Segment"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Last Segment` created"
+                                )       
                             
                     if selected_column == "KTP/ID Validation":
                         ktp = st.selectbox("Choose field that represents `KTP`", options=[""] + list(df.columns))
