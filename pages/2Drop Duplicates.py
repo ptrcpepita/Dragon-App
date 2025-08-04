@@ -5,6 +5,20 @@ from io import BytesIO
 import streamlit as st
 import pandas as pd
 
+st.markdown(
+        """
+        <style>
+            [data-testid = "stSidebarNav"]{
+            background-image: url("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/74d7b0924a521afba224fca618d9e0771ea525e2/asset/dragon_logo_png.png");
+            background-repeat: no-repeat;
+            background-size: 210px;
+            padding-top: 100px;
+            background-position: 0px 0px;
+            }
+        </style>
+        """, unsafe_allow_html=True,
+    )
+
 if "removedupli_clicked" not in st.session_state:
     st.session_state['removedupli_clicked'] = False
 
