@@ -135,7 +135,8 @@ if url:
 
                 transform_opt = ['KTP/ID Validation', 'Phone Number Validation', 'Tahun Periode Polis',
                                     'Age (current)', 'Age (order)', 'Age Group (current)', 'Age Group (order)','Post Code', 'Kota/Kab.', 'Provinsi',
-                                    'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Grouping Claim Ratio','Grouping Claim Frequency','Last Segmen']
+                                    'Chassis Number', 'Gross Premi/Year', 'Grouping Gross Premi/Year', 'Grouping Sum Insured', 'Grouping Claim Ratio','Grouping Claim Frequency','Last Segmen',
+                                'Last Branch']
             
                 selected_column = st.selectbox("Transformation Options", options=[""] + transform_opt)
                 if selected_column:
@@ -170,7 +171,7 @@ if url:
                                 #except Exception as e:
                                     #st.error(f"Error grouping claim ratio {e}")
                                                                                                                  
-                    # LAST SEGMENT ON PROGRESS (indent=6)
+                    # LAST SEGMENT (indent=6)
                     if selected_column == "Last Segmen":
                         cust_id = st.selectbox("Choose field that represents `AAB ID` or unique ID of a customer", options=[""] + list(df.columns))
                         period_from = st.selectbox("Choose field that represents `Period From` of policy", options=[""] + list(df.columns))
@@ -190,8 +191,30 @@ if url:
                                 st.dataframe(df[[cust_id, period_from, segment, "Last Segment"]].head())
                                 st.session_state.change_history.append(
                                     "• Field `Last Segment` created"
-                                )       
+                                )
+                                
+                    # LAST BRANCH (indent=6)
+                    if selected_column == "Last Branch":
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or unique ID of a customer", options=[""] + list(df.columns))
+                        period_from = st.selectbox("Choose field that represents `Period From` of policy", options=[""] + list(df.columns))
+                        branch = st.selectbox("Choose field that represents `Branch` or `Cabang`", options=[""] + list(df.columns))
+
+                        if cust_id:
+                            if st.button("Search last branch"):
+                                df = st.session_state.df
+                                df[period_from] = pd.to_datetime(df[period_from])
+                                idx = df.groupby(cust_id)[period_from].idxmax()
+                                last_branch = df.loc[idx, [cust_id, branch]].rename(columns={branch: "Last Branch"})
+                                df = df.merge(last_branch, on=cust_id, how="left")
+                                st.session_state.df = df
+
+                                st.success("Search for last segment complete")
                             
+                                st.dataframe(df[[cust_id, period_from, branch, "Last Branch"]].head())
+                                st.session_state.change_history.append(
+                                    "• Field `Last Branch` created"
+                                )       
+                                
                     if selected_column == "KTP/ID Validation":
                         ktp = st.selectbox("Choose field that represents `KTP`", options=[""] + list(df.columns))
                         dob_data = st.selectbox("Choose field that represents `DoB`", options=[""] + list(df.columns))
