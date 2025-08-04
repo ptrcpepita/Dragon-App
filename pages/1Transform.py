@@ -168,7 +168,7 @@ if url:
                     if selected_column == 'Jumlah Polis (all time)':
                         polis = st.selectbox("Choose field that represents `Policy No`", options=[""] + list(df.columns))
                         cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
-                        if chassis:
+                        if polis:
                             if st.button("Count number of policy no (all time)"):
                                 df = st.session_state.df
                                 unique = (
