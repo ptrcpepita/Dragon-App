@@ -213,9 +213,29 @@ if url:
                                 st.session_state.change_history.append(
                                     "• Field `Claim Ratio (group)` created"
                                 )
-                                #except Exception as e:
-                                    #st.error(f"Error grouping claim ratio {e}")
-                                                                                                                 
+
+                    if selected_column == "Grouping Claim Frequency":
+                        claim_freq = st.selectbox("Choose field that represents `Claim Frequency`", options=[""] + list(df.columns))
+                        if claim_freq:
+                            if st.button("Group claim frequency"):
+                                df = st.session_state.df
+                                df[claim_freq] = df[claim_freq].astype(int)
+                                df["Claim Freq (group)"] = ""
+                                df.loc[(df[claim_freq] > 0) & (df[claim_freq] <= 3), "Claim Freq (group)"] = "1-3"
+                                df.loc[(df[claim_freq] > 3) & (df[claim_freq] <= 6), "Claim Freq (group)"] = "4-6"
+                                df.loc[(df[claim_freq] > 6) & (df[claim_freq] <= 9), "Claim Freq (group)"] = "6-9"
+                                df.loc[(df[claim_freq] > 9) & (df[claim_freq] <= 12), "Claim Freq (group)"] = "10-12"
+                                df.loc[(df[claim_freq] > 12) & (df[claim_freq] <= 15), "Claim Freq (group)"] = "12-15"
+                                df.loc[(df[claim_freq] > 15) & (df[claim_freq] <= 18), "Claim Freq (group)"] = "15-18"
+                                df.loc[df[claim_freq] > 18, "Claim Freq (group)"] = "19+"
+                                df.loc[df[claim_freq] == 0, "Claim Freq (group)"] = "0"
+                                st.session_state.df = df
+                                st.dataframe(df[[claim_freq, "Claim Freq (group)"]].head())
+                                st.success("Claim frequency successfully grouped and stored")
+                                st.session_state.change_history.append(
+                                    "• Field `Claim Freq (group)` created"
+                                )
+                        
                     # LAST SEGMENT (indent=6)
                     if selected_column == "Last Segmen":
                         cust_id = st.selectbox("Choose field that represents `AAB ID` or unique ID of a customer", options=[""] + list(df.columns))
