@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import io
 from io import BytesIO
-#from io import StringIO
+from io import StringIO
 import re
 from datetime import datetime
 import xlsxwriter
@@ -1091,27 +1091,27 @@ if url:
                                 #df.to_csv(csv, index=False)
                                 #return csv.getvalue().encode("utf-8")
                             
-                        @st.cache_data
-                        def csv_bytes(df):
-                            return df.to_csv(index=False).encode("utf-8")
+                       # @st.cache_data
+                       # def csv_bytes(df):
+                           # return df.to_csv(index=False).encode("utf-8")
 
-                        csv_data = csv_bytes(st.session_state.df)
-                        if st.download_button("📥 Download as CSV", data = csv_data, file_name="transformed_data.csv", mime="text/csv"):
-                            st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
+                      #  csv_data = csv_bytes(st.session_state.df)
+                      #  if st.download_button("📥 Download as CSV", data = csv_data, file_name="transformed_data.csv", mime="text/csv"):
+                       #     st.success("Dataset successfully saved. Thankyou for using Dragon ^^")
                             # st.error(f"❌ Error saving file: {e}")
                 
                         #try:
-                            #output = BytesIO()
-                            #with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                                #df.to_excel(writer, index=False, sheet_name='Sheet1')
-                                #writer.close()
-                                #processed_data = output.getvalue()
+                        output = BytesIO()
+                        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                            df.to_excel(writer, index=False, sheet_name='Sheet1')
+                            writer.close()
+                            processed_data = output.getvalue()
                 
-                            #if st.download_button(label="Download as Excel", data=processed_data,
-                                                #file_name="transformed_dataframe.xlsx",
-                                                #mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-                                #st.success("Dataset successfully saved.")
-                                #st.markdown("## Thankyou for using Dragon ^^")
+                        if st.download_button(label="Download as Excel", data=processed_data,
+                                                file_name="transformed_dataframe.xlsx",
+                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
+                            st.success("Dataset successfully saved.")
+                            st.markdown("## Thankyou for using Dragon ^^")
                         #except Exception as e:
                             #st.error(f"❌ Error saving file: {e}")
                                
