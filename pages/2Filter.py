@@ -40,19 +40,19 @@ st.markdown("## 🎯 Data Filtering")
 st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/74a060302a502fa4fa7083f392180c4567026fa5/asset/userflow_filter.png", width=700)
 
 # 1. UPLOAD DATA
-st.markdown("---")
-st.subheader("📂 1. Upload an Excel File")
-uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
+#st.markdown("---")
+#st.subheader("📂 1. Upload an Excel File")
+#uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
 
-current_file_name = uploaded_file.name if uploaded_file else None
-if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
-    and st.session_state.uploaded_file_name != current_file_name):
-    for key in ["original_df", "df", "custom_dtypes", "change_history"]:
-        st.session_state.pop(key, None)
-    st.session_state.uploaded_file_name = current_file_name
+#current_file_name = uploaded_file.name if uploaded_file else None
+#if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
+    #and st.session_state.uploaded_file_name != current_file_name):
+    #for key in ["original_df", "df", "custom_dtypes", "change_history"]:
+        #st.session_state.pop(key, None)
+    #st.session_state.uploaded_file_name = current_file_name
     
-elif uploaded_file and "uploaded_file_name" not in st.session_state:
-    st.session_state.uploaded_file_name = current_file_name
+#elif uploaded_file and "uploaded_file_name" not in st.session_state:
+    #st.session_state.uploaded_file_name = current_file_name
 
 st.markdown("---")
 st.subheader("📂 1. Insert an Excel File Link")
