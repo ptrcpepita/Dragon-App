@@ -43,8 +43,6 @@ if 'savedata_clicked' not in st.session_state:
     st.session_state['savedata_clicked'] = False
 
 st.markdown("## 🔄 Data Transformation")
-
-#st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/asset/userflow_transform.png", width=650)
 st.image("https://raw.githubusercontent.com/ptrcpepita/Dragon-App/93cd0d4daea18d24544b50e00fb68cea9b8a98f2/asset/userflow_transform.png", width=650)
 
 # 1. UPLOAD DATA
@@ -52,28 +50,6 @@ st.markdown("---")
 st.subheader("📂 1. Insert an Excel File Link")
 
 url = st.text_input("Paste the one drive public Excel file URL here (format = one drive link + '&download=1'):")
-
-#if url:
-   # try:
-       # response = requests.get(url)
-       # response.raise_for_status()  # Raise error for bad status
-       # df = pd.read_excel(BytesIO(response.content))  # For .xlsx files
-       # st.success("File loaded successfully!")
-       # st.dataframe(df.head())  
-  #  except Exception as e:
-      #  st.error(f"Failed to load the Excel file: {e}")
-
-#uploaded_file = st.file_uploader('Upload here', type=["xlsx", "csv"])
-
-#current_file_name = uploaded_file.name if uploaded_file else None
-#if ("uploaded_file_name" in st.session_state # cek apakah filenya berubah/ilang
-   # and st.session_state.uploaded_file_name != current_file_name):
-    #for key in ["original_df", "df", "custom_dtypes", "change_history", "change_history2"]:
-       # st.session_state.pop(key, None)
-   # st.session_state.uploaded_file_name = current_file_name
-    
-# elif uploaded_file and "uploaded_file_name" not in st.session_state:
-   # st.session_state.uploaded_file_name = current_file_name
 
 current_file_name = os.path.basename(url) if url else None
 if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
@@ -85,23 +61,15 @@ if ("url_name" in st.session_state # cek apakah filenya berubah/ilang
 elif url and "url_name" not in st.session_state:
     st.session_state.uploaded_file_name = current_file_name
         
-#if uploaded_file:
-    #try:
-        #if "original_df" not in st.session_state:
 if url:
     try:
         if "original_df" not in st.session_state:
             response = requests.get(url)
             response.raise_for_status()  # Raise error for bad status
             df = pd.read_excel(BytesIO(response.content), dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})  # For .xlsx files
-            #st.success("File loaded successfully!")
-            #st.dataframe(df.head())  
-
-        #df = pd.read_excel(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'}) if uploaded_file.name.endswith('xlsx') else pd.read_csv(uploaded_file, dtype={'Policy No': 'str', 'Phone No': 'str', 'ID Number': 'str', 'HP':'str', 'NIK':'str', 'Tahun':'str', 'Policy Holder Code':'str', 'Post Code': 'str', 'Postal Code': 'str', 'Kode Pos': 'str', 'Home Post Code': 'str', 'Office Post Code': 'str'})
             
             st.session_state.original_df = df.copy() # original data
             st.session_state.df = df.copy() # ini working copy yang user akan pake
-            # st.session_state.custom_dtypes = {col: str(df[col].dtype) for col in df.columns}
             st.session_state.change_history = []
             st.success("Dataset loaded successfully. Click button below to transform the data")
 
