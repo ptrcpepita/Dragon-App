@@ -144,7 +144,7 @@ if url:
                     if selected_column == 'Vehicle Count (polis aktif)':
                         chassis = st.selectbox("Choose field that represents `Chassis Number`", options=[""] + list(df.columns))
                         period_to = st.selectbox("Choose field that represents `Period To`", options=[""] + list(df.columns))
-                        cust_id = st.selextbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
+                        cust_id = st.selectbox("Choose field that represents `AAB ID` or any unique customer identifier", options=[""] + list(df.columns))
                         target_date = st.text_input("Input date bound with format MM-DD-YYYY (e.g. 07-11-2026 to find policy below 11th July 2026)")
                         if chassis:
                             if st.button("Count number of vehicle (polis aktif)"):
